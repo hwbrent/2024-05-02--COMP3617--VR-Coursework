@@ -1,5 +1,8 @@
 import math
 import numbers
+import os
+
+import pandas as pd
 
 
 class Vector(object):
@@ -91,3 +94,20 @@ class Vector(object):
 
     def __iter__(self):
         return self.components.__iter__()
+
+
+def import_dataset() -> pd.core.frame.DataFrame:
+    """
+    --- Problem 2 Part 1 ---
+
+    This function loads the `IMUData` CSV file and returns it as a pandas
+    `DataFrame`
+    """
+    ds_name = "IMUData.csv"
+    ds_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), os.pardir, ds_name)
+    )
+
+    ds = pd.read_csv(ds_path)
+
+    return ds
