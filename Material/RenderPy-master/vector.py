@@ -110,4 +110,8 @@ def import_dataset() -> pd.core.frame.DataFrame:
 
     ds = pd.read_csv(ds_path)
 
+    # For some reason, there is rogue whitespace on one or both sides of
+    # each column name. Let's fix that:
+    ds.columns = ds.columns.map(lambda col_name: col_name.strip())
+
     return ds
