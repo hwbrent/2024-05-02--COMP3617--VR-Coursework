@@ -3,6 +3,8 @@ from model import Model
 from shape import Point, Line, Triangle
 from vector import Vector
 
+from PIL import Image as PIL_Image
+
 width = 512
 height = 512
 image = Image(width, height, Color(255, 255, 255, 255))
@@ -87,4 +89,6 @@ for face in model.faces:
             transformedPoints[0], transformedPoints[1], transformedPoints[2]
         ).draw_faster(image, zBuffer)
 
-image.saveAsPNG("image.png")
+filename = "image.png"
+image.saveAsPNG(filename)
+PIL_Image.open(filename).show()
