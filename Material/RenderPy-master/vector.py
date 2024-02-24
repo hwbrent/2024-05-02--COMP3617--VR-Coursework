@@ -115,3 +115,21 @@ def import_dataset() -> pd.core.frame.DataFrame:
     ds.columns = ds.columns.map(lambda col_name: col_name.strip())
 
     return ds
+
+
+def convert_rotational_rate(dataset: pd.core.frame.DataFrame) -> None:
+    """
+    --- Problem 2 Part 1 ---
+
+    Given the dataset obtained by `import_dataset`, this function converts
+    the rotational rate (tri-axial velocity in deg/s) to radians/sec
+    in-place
+    """
+
+    axes = ("X", "Y", "Z")
+    for axis in axes:
+        # Get the name of the column
+        col = "gyroscope." + axis  # e.g. gyroscope.X
+
+        # Convert each value in the column from degrees to radians
+        dataset[col] = dataset[col].apply(lambda value: math.radians(value))
