@@ -89,6 +89,4 @@ for face in model.faces:
             transformedPoints[0], transformedPoints[1], transformedPoints[2]
         ).draw_faster(image, zBuffer)
 
-filename = "image.png"
-image.saveAsPNG(filename)
-PIL_Image.open(filename).show()
+image.show()

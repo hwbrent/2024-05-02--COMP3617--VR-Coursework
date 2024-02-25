@@ -9,6 +9,9 @@
 
 import zlib, struct
 
+from PIL import Image as PIL_Image
+import io
+
 
 class Color(object):
     """A small class representing a 32-bit RGBA color."""
@@ -87,9 +90,10 @@ class Image(object):
         # Set the new pixel colors in the buffer
         self.buffer[index + 1 : index + 5] = outColor.getTuple()
 
-    def saveAsPNG(self, filename="render.png"):
-        """Pack a new buffer formatted as a PNG, then save it to a file."""
-        print("Saving PNG...")
+    def packData(self) -> bytes:
+        """
+        Pack a new buffer formatted as a PNG.
+        """
 
         def makeChunk(chunkType, chunkData):
             """Pack data into standard PNG chunks. Chunks consist of:
@@ -122,6 +126,33 @@ class Image(object):
             + makeChunk(b"IEND", b"")
         )
 
+        return packedData
+
+    def saveAsPNG(self, filename="render.png"):
+        """
+        Save the output of `packData` to a file.
+        """
+
+        print("Saving PNG...")
+
         png = open(filename, "wb")
-        png.write(packedData)
+        png.write(self.packData())
         png.close()
+
+    def show(self) -> None:
+        """
+        --- Problem 1 Question 1 ---
+
+        Enable real time output of the frame buffer on the screen
+        """
+
+        binary_data = self.packData()
+
+        # Create a BytesIO object to wrap the binary data
+        binary_stream = io.BytesIO(binary_data)
+
+        # Open the image using PIL
+        image = PIL_Image.open(binary_stream)
+
+        # Display the image
+        image.show()
