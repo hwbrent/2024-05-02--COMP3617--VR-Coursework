@@ -3,8 +3,6 @@ from model import Model
 from shape import Point, Line, Triangle
 from vector import Vector
 
-from PIL import Image as PIL_Image
-
 width = 512
 height = 512
 image = Image(width, height, Color(255, 255, 255, 255))
