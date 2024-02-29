@@ -142,6 +142,15 @@ class Quaternion:
         self.y = y
         self.z = z
 
+    def get_conjugate(self):
+        """
+        --- Problem 2 Question 2 Part 3 ---
+
+        Returns the conjugate (i.e. inverse rotation) of this `Quaternion`
+        """
+        w, x, y, z = self
+        return Quaternion(w, -x, -y, -z)
+
     def __repr__(self):
         return f"Quaternion(w={self.w}, x={self.x}, y={self.y}, z={self.z})"
 
