@@ -41,6 +41,20 @@ class Vector(object):
     def z(self, val):
         self.components = (self.components[0], self.components[1], val)
 
+    @property
+    def w(self):
+        assert len(self) >= 4
+        return self.components[3]
+
+    @w.setter
+    def w(self, val):
+        self.components = (
+            self.components[0],
+            self.components[1],
+            self.components[2],
+            val,
+        )
+
     def norm(self):
         """Return the norm (magnitude) of this vector."""
         squaredComponents = sum(math.pow(comp, 2) for comp in self)
