@@ -4,6 +4,50 @@ import numbers
 import numpy as np
 
 
+def get_rotation_matrix(axis: str, angle: float) -> np.array:
+    """
+    Returns the correct pre-populated rotation matrix based on the `axis`
+    and `angle` (in degrees) provided.
+
+    See:
+    - https://www.cs.columbia.edu/~allen/F19/NOTES/homogeneous_matrices.pdf
+    """
+
+    angle = math.radians(angle)
+
+    sin = math.sin(angle)
+    cos = math.cos(angle)
+
+    matrix = None
+
+    match axis:
+        # fmt: off
+        case "x":
+            matrix = [
+                [1, 0, 0, 0],
+                [0, cos, -sin, 0],
+                [0, sin, cos, 0],
+                [0, 0, 0, 1]
+            ]
+        case "y":
+            matrix = [
+                [cos, 0, sin, 0],
+                [0, 1, 0, 0],
+                [-sin, 0, cos, 0],
+                [0, 0, 0, 1]
+            ]
+        case "z":
+            matrix = [
+                [cos, -sin, 0, 0],
+                [sin, cos, 0, 0],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1]
+            ]
+        # fmt: off
+
+    return np.array(matrix)
+
+
 class Vector(object):
     """A vector with useful vector / matrix operations."""
 
@@ -111,6 +155,19 @@ class Vector(object):
         new = np.matmul(matrix, self.np_array)
 
         return Vector(*new)
+
+    def rotate(self, axis: str, angle: float):
+        """
+        -- Problem 1 Question 3 --
+
+        Return a new vector equal to this one rotated around `axis` by `angle`
+        """
+
+        matrix = get_rotation_matrix(axis, angle)
+        rotated = np.matmul(matrix, self.np_array)
+        vector = Vector(*rotated)
+
+        return vector
 
     # Overrides
     def __mul__(self, other):
