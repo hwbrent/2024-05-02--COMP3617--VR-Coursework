@@ -1,6 +1,8 @@
 import math
 import numbers
 
+import numpy as np
+
 
 class Vector(object):
     """A vector with useful vector / matrix operations."""
@@ -60,6 +62,10 @@ class Vector(object):
         assert len(self) >= 3
         return self.components[:3]
 
+    @property
+    def np_array(self):
+        return np.array(self.components)
+
     def norm(self):
         """Return the norm (magnitude) of this vector."""
         squaredComponents = sum(math.pow(comp, 2) for comp in self.xyz)
@@ -84,6 +90,27 @@ class Vector(object):
             (self.x * other.y - self.y * other.x),
             1,
         )
+
+    def translate(self, dx: int, dy: int, dz: int):
+        """
+        -- Problem 1 Question 3 --
+
+        Returns a new `Vector` equal to this one translated in the x, y and
+        z axes by `dx`, `dy`, `dz` respectively.
+        """
+
+        matrix = np.array(
+            [
+                [1, 0, 0, dx],
+                [0, 1, 0, dy],
+                [0, 0, 1, dz],
+                [0, 0, 0, 1],
+            ]
+        )
+
+        new = np.matmul(matrix, self.np_array)
+
+        return Vector(*new)
 
     # Overrides
     def __mul__(self, other):
