@@ -98,7 +98,7 @@ class Vector(object):
 
 def import_dataset() -> pd.core.frame.DataFrame:
     """
-    --- Problem 2 Part 1 ---
+    --- Problem 2 Question 1 ---
 
     This function loads the `IMUData` CSV file and returns it as a pandas
     `DataFrame`
@@ -119,7 +119,7 @@ def import_dataset() -> pd.core.frame.DataFrame:
 
 def convert_rotational_rate(dataset: pd.core.frame.DataFrame) -> None:
     """
-    --- Problem 2 Part 1 ---
+    --- Problem 2 Question 1 ---
 
     Given the dataset obtained by `import_dataset`, this function converts
     the rotational rate (tri-axial velocity in deg/s) to radians/sec
