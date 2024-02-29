@@ -133,3 +133,39 @@ def convert_rotational_rate(dataset: pd.core.frame.DataFrame) -> None:
 
         # Convert each value in the column from degrees to radians
         dataset[col] = dataset[col].apply(lambda value: math.radians(value))
+
+
+class Quaternion:
+    def __init__(self, w: float, x: float, y: float, z: float) -> None:
+        self.w = w
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def __repr__(self):
+        return f"Quaternion(w={self.w}, x={self.x}, y={self.y}, z={self.z})"
+
+
+def euler_to_quaternion(roll, pitch, yaw) -> Quaternion:
+    """
+    --- Problem 2 Question 2 Part 1 ---
+
+    Converts the three Euler angles (in radians) to a `Quaternion`.
+    """
+
+    # fmt: off
+    sin_roll  = math.sin(roll  * 0.5)
+    sin_pitch = math.sin(pitch * 0.5)
+    sin_yaw   = math.sin(yaw   * 0.5)
+
+    cos_roll  = math.cos(roll  * 0.5)
+    cos_pitch = math.cos(pitch * 0.5)
+    cos_yaw   = math.cos(yaw   * 0.5)
+
+    return Quaternion(
+        w = (cos_roll * cos_pitch * cos_yaw) + (sin_roll * sin_pitch * sin_yaw),
+        x = (sin_roll * cos_pitch * cos_yaw) - (cos_roll * sin_pitch * sin_yaw),
+        y = (cos_roll * sin_pitch * cos_yaw) + (sin_roll * cos_pitch * sin_yaw),
+        z = (cos_roll * cos_pitch * sin_yaw) - (sin_roll * sin_pitch * cos_yaw),
+    )
+    # fmt: on
