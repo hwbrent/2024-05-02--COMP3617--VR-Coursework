@@ -169,6 +169,28 @@ class Vector(object):
 
         return vector
 
+    def scale(self, sx, sy, sz):
+        """
+        -- Problem 1 Question 3 --
+
+        Returns a new `Vector` equal to this one scaled in the x, y and
+        z axes by `sx`, `sy`, `sz` respectively.
+        """
+
+        matrix = np.array(
+            [
+                [sx, 0, 0, 0],
+                [0, sy, 0, 0],
+                [0, 0, sz, 0],
+                [0, 0, 0, 1],
+            ]
+        )
+
+        scaled = np.matmul(matrix, self.np_array)
+        vector = Vector(*scaled)
+
+        return vector
+
     # Overrides
     def __mul__(self, other):
         """If multiplied by another vector, return the dot product.
