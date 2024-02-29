@@ -1,7 +1,16 @@
+import math
+
+import numpy as np
+
 from image import Image, Color
 from model import Model
 from shape import Point, Line, Triangle
 from vector import Vector
+
+
+FOV = math.radians(90)  # Standard
+FOCAL_LENGTH = 1 / math.tan(FOV / 2)
+
 
 width = 512
 height = 512
@@ -22,6 +31,49 @@ def getOrthographicProjection(x, y, z):
     screenY = int((y + 1.0) * height / 2.0)
 
     return screenX, screenY
+
+
+def getPerspectiveProjectionMatrix() -> list[list[float]]:
+    """
+    --- Problem 1 Question 2 ---
+
+    This function gets the matrix used for perspective projection
+    """
+
+    aspect_ratio = image.width / image.height
+    near = 0.1
+    far = 1_000
+
+    matrix = [
+        [FOCAL_LENGTH / aspect_ratio, 0, 0, 0],
+        [0, FOCAL_LENGTH, 0, 0],
+        [0, 0, (far + near) / (near - far), (2 * far * near) / (near - far)],
+        [0, 0, -1, 0],
+    ]
+
+    return matrix
+
+
+def doPerspectiveProjection(vector: Vector) -> tuple[int, int]:
+    """
+    --- Problem 1 Question 2 ---
+
+    Apply perspective projection to a given a `Vector` object, and return
+    the `x` and `y` components.
+    """
+
+    pp_matrix = getPerspectiveProjectionMatrix()
+    components = (
+        (*vector.components, 1) if len(vector.components) != 4 else vector.components
+    )
+
+    projected = np.dot(np.array(components), np.array(pp_matrix))
+
+    projected /= projected[3]  # Perform perspective divide
+
+    x, y, *_ = projected
+
+    return int(x), int(y)
 
 
 def getVertexNormal(vertIndex, faceNormalsByVertex):
@@ -72,7 +124,7 @@ for face in model.faces:
         if intensity < 0:
             cull = True  # Back face culling is disabled in this version
 
-        screenX, screenY = getOrthographicProjection(p.x, p.y, p.z)
+        screenX, screenY = doPerspectiveProjection(p)
         transformedPoints.append(
             Point(
                 screenX,
