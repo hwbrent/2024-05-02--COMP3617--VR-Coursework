@@ -55,6 +55,11 @@ class Vector(object):
             val,
         )
 
+    @property
+    def xyz(self):
+        assert len(self) >= 3
+        return self.components[:3]
+
     def norm(self):
         """Return the norm (magnitude) of this vector."""
         squaredComponents = sum(math.pow(comp, 2) for comp in self)
