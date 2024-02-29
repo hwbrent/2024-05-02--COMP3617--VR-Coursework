@@ -8,7 +8,7 @@ from vector import Vector
 
 class Model(object):
     def __init__(self, file):
-        self.vertices = []
+        self.vertices: list[Vector] = []
         self.faces = []
         self.scale = [0, 0, 0]
         self.rot = [0, 0, 0]
@@ -52,3 +52,32 @@ class Model(object):
             vertex.x = vertex.x * s
             vertex.y = vertex.y * s
             vertex.z = vertex.z * s
+
+    def translate(self, dx: int, dy: int, dz: int) -> None:
+        """
+        -- Problem 1 Question 3 --
+
+        Translates this `Model` in-place in the x, y and z axes by `dx`, `dy`, `dz`
+        respectively.
+        """
+
+        self.vertices = [v.translate(dx, dy, dz) for v in self.vertices]
+
+    def rotate(self, axis: str, angle: float) -> None:
+        """
+        -- Problem 1 Question 3 --
+
+        Rotates this `Model` in-place around `axis` by `angle` degrees.
+        """
+
+        self.vertices = [v.rotate(axis, angle) for v in self.vertices]
+
+    def scale(self, sx, sy, sz) -> None:
+        """
+        -- Problem 1 Question 3 --
+
+        Scales this `Model` in-place in the x, y and z axes by `sx`, `sy`
+        and `sz` respectively.
+        """
+
+        self.vertices = [v.scale(sx, sy, sz) for v in self.vertices]
