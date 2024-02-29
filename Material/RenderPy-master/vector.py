@@ -145,6 +145,28 @@ class Quaternion:
     def __repr__(self):
         return f"Quaternion(w={self.w}, x={self.x}, y={self.y}, z={self.z})"
 
+    def __iter__(self):
+        return iter((self.w, self.x, self.y, self.z))
+
+
+class EulerAngles:
+    """
+    - Roll  (φ) -- rotation around the X-axis
+    - Pitch (θ) -- rotation around the Y-axis
+    - Yaw   (ψ) -- rotation around the Z-axis
+    """
+
+    def __init__(self, roll: float, pitch: float, yaw: float) -> None:
+        self.roll = roll
+        self.pitch = pitch
+        self.yaw = yaw
+
+    def __repr__(self):
+        return f"EulerAngles(roll={self.roll}, pitch={self.pitch}, yaw={self.yaw})"
+
+    def __iter__(self):
+        return iter((self.roll, self.pitch, self.yaw))
+
 
 def euler_to_quaternion(roll, pitch, yaw) -> Quaternion:
     """
@@ -169,3 +191,32 @@ def euler_to_quaternion(roll, pitch, yaw) -> Quaternion:
         z = (cos_roll * cos_pitch * sin_yaw) - (sin_roll * sin_pitch * cos_yaw),
     )
     # fmt: on
+
+
+def quaternion_to_euler(quaternion: Quaternion) -> EulerAngles:
+    """
+    Given a `Quaternion`, this function returns the corresponding Euler
+    angles object
+    """
+    w, x, y, z = quaternion
+
+    wx = w * x
+    yz = y * z
+    x2 = math.pow(x, 2)
+    y2 = math.pow(y, 2)
+    roll = math.atan2(2 * (wx + yz), 1 - (2 * (x2 + y2)))
+
+    minus_pi_div_2 = -math.pi / 2
+    wy = w * y
+    xz = x * z
+    two_wy_minus_xz = 2 * (wy - xz)
+    sqrt1 = math.sqrt(1 + two_wy_minus_xz)
+    sqrt2 = math.sqrt(1 - two_wy_minus_xz)
+    pitch = minus_pi_div_2 + (2 * math.atan2(sqrt1, sqrt2))
+
+    wz = w * z
+    xy = x * y
+    z2 = math.pow(z, 2)
+    yaw = math.atan2(2 * (wz + xy), 1 - (2 * (y2 + z2)))
+
+    return EulerAngles(roll, pitch, yaw)
