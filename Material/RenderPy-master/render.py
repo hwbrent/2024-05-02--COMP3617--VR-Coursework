@@ -51,7 +51,7 @@ def getPerspectiveProjectionMatrix() -> list[list[float]]:
         [0, 0, -1, 0],
     ]
 
-    return matrix
+    return np.array(matrix)
 
 
 def doPerspectiveProjection(vector: Vector) -> tuple[int, int]:
@@ -62,18 +62,31 @@ def doPerspectiveProjection(vector: Vector) -> tuple[int, int]:
     the `x` and `y` components.
     """
 
-    pp_matrix = getPerspectiveProjectionMatrix()
+    # Make sure that the w component is present (by default it should be, but
+    # I found that sometimes it wasn't for some reason)
     components = (
         (*vector.components, 1) if len(vector.components) != 4 else vector.components
     )
 
-    projected = np.dot(np.array(components), np.array(pp_matrix))
+    projected = np.dot(
+        np.array(components),
+        getPerspectiveProjectionMatrix(),
+    )
 
-    projected /= projected[3]  # Perform perspective divide
+    # Perform perspective divide (avoiding division by zero)
+    if projected[3] != 0:
+        projected /= projected[3]
 
-    x, y, *_ = projected
+    x, y, _ = projected[:3]
 
     return int(x), int(y)
+
+
+def getScreenCoords(x: int, y: int) -> tuple[int, int]:
+    return (
+        int((x + 1.0) * width / 2.0),
+        int((y + 1.0) * height / 2.0),
+    )
 
 
 def getVertexNormal(vertIndex, faceNormalsByVertex):
@@ -124,7 +137,11 @@ for face in model.faces:
         if intensity < 0:
             cull = True  # Back face culling is disabled in this version
 
-        screenX, screenY = doPerspectiveProjection(p)
+        # Get the perspective-projected coordinates, then get the screen
+        # coordinates from those
+        proj_X, proj_Y = doPerspectiveProjection(p)
+        screenX, screenY = getScreenCoords(proj_X, proj_Y)
+
         transformedPoints.append(
             Point(
                 screenX,
