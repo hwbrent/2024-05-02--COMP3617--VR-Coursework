@@ -197,6 +197,8 @@ def euler_to_quaternion(euler_angles: EulerAngles) -> Quaternion:
 
 def quaternion_to_euler(quaternion: Quaternion) -> EulerAngles:
     """
+    --- Problem 2 Question 2 Part 2 ---
+
     Given a `Quaternion`, this function returns the corresponding Euler
     angles object
     """
