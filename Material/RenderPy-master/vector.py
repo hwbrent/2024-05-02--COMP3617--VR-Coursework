@@ -6,8 +6,11 @@ class Vector(object):
     """A vector with useful vector / matrix operations."""
 
     def __init__(self, *args):
-        if len(args) == 0:
+        length = len(args)
+        if length == 0:
             self.components = (0, 0)
+        elif length == 3:
+            self.components = (*args, 1)
         else:
             self.components = args
 
