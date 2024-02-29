@@ -168,12 +168,14 @@ class EulerAngles:
         return iter((self.roll, self.pitch, self.yaw))
 
 
-def euler_to_quaternion(roll, pitch, yaw) -> Quaternion:
+def euler_to_quaternion(euler_angles: EulerAngles) -> Quaternion:
     """
     --- Problem 2 Question 2 Part 1 ---
 
-    Converts the three Euler angles (in radians) to a `Quaternion`.
+    Converts the Euler angles object to a `Quaternion`.
     """
+
+    roll, pitch, yaw = euler_angles
 
     # fmt: off
     sin_roll  = math.sin(roll  * 0.5)
