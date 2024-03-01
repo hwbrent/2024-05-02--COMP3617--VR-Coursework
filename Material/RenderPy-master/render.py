@@ -5,6 +5,8 @@ from vector import Vector
 
 FOCAL_LENGTH = 1
 
+NEAR_CLIP = 0.1
+
 width = 512
 height = 512
 image = Image(width, height, Color(255, 255, 255, 255))
@@ -18,7 +20,9 @@ model.normalizeGeometry()
 
 
 def getPerspectiveProjection(x, y, z):
-    z = max(z, 1e-6)  # Use minimum z value to avoid ZeroDivisionError
+    if z < NEAR_CLIP:
+        return
+
     return (
         int(((FOCAL_LENGTH * x) / z + 1.0) * width / 2.0),
         int(((FOCAL_LENGTH * y) / z + 1.0) * height / 2.0),
@@ -73,7 +77,11 @@ for face in model.faces:
         if intensity < 0:
             cull = True  # Back face culling is disabled in this version
 
-        screenX, screenY = getPerspectiveProjection(*p.xyz)
+        coords = getPerspectiveProjection(*p.xyz)
+        if coords is None:
+            continue
+
+        screenX, screenY = coords
         transformedPoints.append(
             Point(
                 screenX,
@@ -83,7 +91,8 @@ for face in model.faces:
             )
         )
 
-    if not cull:
+    # Don't draw triangles whose vertices have been cut off
+    if not cull and len(transformedPoints) == 3:
         Triangle(
             transformedPoints[0], transformedPoints[1], transformedPoints[2]
         ).draw_faster(image, zBuffer)
