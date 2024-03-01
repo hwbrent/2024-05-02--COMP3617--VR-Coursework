@@ -19,6 +19,15 @@ model = Model("data/books.obj")
 model.normalizeGeometry()
 
 
+def getOrthographicProjection(x, y, z):
+    # Convert vertex from world space to screen space
+    # by dropping the z-coordinate (Orthographic projection)
+    screenX = int((x + 1.0) * width / 2.0)
+    screenY = int((y + 1.0) * height / 2.0)
+
+    return screenX, screenY
+
+
 def getPerspectiveProjection(x, y, z):
     if z < NEAR_CLIP:
         return
@@ -77,6 +86,7 @@ for face in model.faces:
         if intensity < 0:
             cull = True  # Back face culling is disabled in this version
 
+        # coords = getOrthographicProjection(*p.xyz)
         coords = getPerspectiveProjection(*p.xyz)
         if coords is None:
             continue
