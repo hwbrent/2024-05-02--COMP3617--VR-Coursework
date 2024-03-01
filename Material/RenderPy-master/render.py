@@ -8,8 +8,8 @@ from vector import Vector
 FOCAL_LENGTH = 1
 NEAR_CLIP = 0.1
 
-width = 512
-height = 512
+WIDTH = 512
+HEIGHT = 512
 
 
 # Set the camera back slightly from the origin so that the whole headset is
@@ -20,8 +20,8 @@ camera = Vector(0, 0, -2)
 def getOrthographicProjection(x, y, z):
     # Convert vertex from world space to screen space
     # by dropping the z-coordinate (Orthographic projection)
-    screenX = int((x + 1.0) * width / 2.0)
-    screenY = int((y + 1.0) * height / 2.0)
+    screenX = int((x + 1.0) * WIDTH / 2.0)
+    screenY = int((y + 1.0) * HEIGHT / 2.0)
 
     return screenX, screenY
 
@@ -44,8 +44,8 @@ def getPerspectiveProjection(vector: Vector) -> None | tuple[int, int]:
         ((FOCAL_LENGTH * axis) / z + 1.0) * dimension / 2.0
     )
 
-    x = project(x, width)
-    y = project(y, height)
+    x = project(x, WIDTH)
+    y = project(y, HEIGHT)
 
     return x, y
 
@@ -60,10 +60,10 @@ def getVertexNormal(vertIndex, faceNormalsByVertex):
 
 
 def render(model: Model) -> None:
-    image = Image(width, height, Color(255, 255, 255, 255))
+    image = Image(WIDTH, HEIGHT, Color(255, 255, 255, 255))
 
     # Init z-buffer
-    zBuffer = [-float("inf")] * width * height
+    zBuffer = [-float("inf")] * WIDTH * HEIGHT
 
     # Calculate face normals
     faceNormals = {}
