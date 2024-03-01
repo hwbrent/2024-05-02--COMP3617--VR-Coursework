@@ -59,7 +59,7 @@ class Vector(object):
     def cross(self, other):
         """Return the cross product of this and another vector."""
         assert len(self) == len(other), "Vectors must be the same size."
-        assert len(self) == 3, "Cross product only implemented for 3D vectors."
+        assert len(self) == 4, "Cross product only implemented for 3D vectors."
         return Vector(
             (self.y * other.z - self.z * other.y),
             (self.z * other.x - self.x * other.z),
