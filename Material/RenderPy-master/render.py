@@ -7,10 +7,8 @@ from model import Model
 from shape import Point, Line, Triangle
 from vector import Vector
 
-
-FOV = math.radians(90)  # Standard
-FOCAL_LENGTH = 1 / math.tan(FOV / 2)
-
+FOCAL_LENGTH = 1
+NEAR_CLIP = 0.1
 
 width = 512
 height = 512
@@ -24,6 +22,11 @@ model = Model("data/headset.obj")
 model.normalizeGeometry()
 
 
+# Set the camera back slightly from the origin so that the whole headset is
+# visible.
+camera = Vector(0, 0, -2)
+
+
 def getOrthographicProjection(x, y, z):
     # Convert vertex from world space to screen space
     # by dropping the z-coordinate (Orthographic projection)
@@ -33,60 +36,28 @@ def getOrthographicProjection(x, y, z):
     return screenX, screenY
 
 
-def getPerspectiveProjectionMatrix() -> list[list[float]]:
+def getPerspectiveProjection(vector: Vector) -> None | tuple[int, int]:
     """
     --- Problem 1 Question 2 ---
 
-    This function gets the matrix used for perspective projection
+    Apply perspective projection to a given a `Vector` object. If `vector`
+    is further than the clip distance, return its `x` and `y` components.
     """
 
-    aspect_ratio = image.width / image.height
-    near = 0.1
-    far = 1_000
+    # Get the position of the given vector relative to the camera
+    x, y, z = (vector - camera).xyz
 
-    matrix = [
-        [FOCAL_LENGTH / aspect_ratio, 0, 0, 0],
-        [0, FOCAL_LENGTH, 0, 0],
-        [0, 0, (far + near) / (near - far), (2 * far * near) / (near - far)],
-        [0, 0, -1, 0],
-    ]
+    if z < NEAR_CLIP:
+        return None
 
-    return np.array(matrix)
-
-
-def doPerspectiveProjection(vector: Vector) -> tuple[int, int]:
-    """
-    --- Problem 1 Question 2 ---
-
-    Apply perspective projection to a given a `Vector` object, and return
-    the `x` and `y` components.
-    """
-
-    # Make sure that the w component is present (by default it should be, but
-    # I found that sometimes it wasn't for some reason)
-    components = (
-        (*vector.components, 1) if len(vector.components) != 4 else vector.components
+    project = lambda axis, dimension: int(
+        ((FOCAL_LENGTH * axis) / z + 1.0) * dimension / 2.0
     )
 
-    projected = np.dot(
-        np.array(components),
-        getPerspectiveProjectionMatrix(),
-    )
+    x = project(x, width)
+    y = project(y, height)
 
-    # Perform perspective divide (avoiding division by zero)
-    if projected[3] != 0:
-        projected /= projected[3]
-
-    x, y, _ = projected[:3]
-
-    return int(x), int(y)
-
-
-def getScreenCoords(x: int, y: int) -> tuple[int, int]:
-    return (
-        int((x + 1.0) * width / 2.0),
-        int((y + 1.0) * height / 2.0),
-    )
+    return x, y
 
 
 def getVertexNormal(vertIndex, faceNormalsByVertex):
@@ -137,10 +108,12 @@ for face in model.faces:
         if intensity < 0:
             cull = True  # Back face culling is disabled in this version
 
-        # Get the perspective-projected coordinates, then get the screen
-        # coordinates from those
-        proj_X, proj_Y = doPerspectiveProjection(p)
-        screenX, screenY = getScreenCoords(proj_X, proj_Y)
+        # coords = getOrthographicProjection(*p.xyz)
+        coords = getPerspectiveProjection(p)
+        if coords is None:
+            continue
+
+        screenX, screenY = coords
 
         transformedPoints.append(
             Point(
@@ -151,7 +124,8 @@ for face in model.faces:
             )
         )
 
-    if not cull:
+    # Don't draw triangles whose vertices have been cut off
+    if not cull and len(transformedPoints) == 3:
         Triangle(
             transformedPoints[0], transformedPoints[1], transformedPoints[2]
         ).draw_faster(image, zBuffer)

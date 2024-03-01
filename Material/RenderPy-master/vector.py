@@ -3,6 +3,8 @@ import numbers
 
 import numpy as np
 
+DEFAULT_W_VALUE = 1
+
 
 def get_rotation_matrix(axis: str, angle: float) -> np.array:
     """
@@ -55,8 +57,8 @@ class Vector(object):
         length = len(args)
         if length == 0:
             self.components = (0, 0)
-        elif length == 3:
-            self.components = (*args, 1)
+        elif len(args) == 3:
+            self.components = (*args, DEFAULT_W_VALUE)
         else:
             self.components = args
 
@@ -132,7 +134,7 @@ class Vector(object):
             (self.y * other.z - self.z * other.y),
             (self.z * other.x - self.x * other.z),
             (self.x * other.y - self.y * other.x),
-            1,
+            DEFAULT_W_VALUE,
         )
 
     def translate(self, dx: int, dy: int, dz: int):
