@@ -18,6 +18,7 @@ model.normalizeGeometry()
 
 
 def getPerspectiveProjection(x, y, z):
+    z = max(z, 1e-6)  # Use minimum z value to avoid ZeroDivisionError
     return (
         int(((FOCAL_LENGTH * x) / z + 1.0) * width / 2.0),
         int(((FOCAL_LENGTH * y) / z + 1.0) * height / 2.0),
