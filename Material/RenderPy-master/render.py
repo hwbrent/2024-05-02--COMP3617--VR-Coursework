@@ -3,6 +3,8 @@ from model import Model
 from shape import Point, Line, Triangle
 from vector import Vector
 
+FOCAL_LENGTH = 1
+
 width = 512
 height = 512
 image = Image(width, height, Color(255, 255, 255, 255))
@@ -15,13 +17,11 @@ model = Model("data/headset.obj")
 model.normalizeGeometry()
 
 
-def getOrthographicProjection(x, y, z):
-    # Convert vertex from world space to screen space
-    # by dropping the z-coordinate (Orthographic projection)
-    screenX = int((x + 1.0) * width / 2.0)
-    screenY = int((y + 1.0) * height / 2.0)
-
-    return screenX, screenY
+def getPerspectiveProjection(x, y, z):
+    return (
+        int(((FOCAL_LENGTH * x) / z + 1.0) * width / 2.0),
+        int(((FOCAL_LENGTH * y) / z + 1.0) * height / 2.0),
+    )
 
 
 def getVertexNormal(vertIndex, faceNormalsByVertex):
@@ -72,7 +72,7 @@ for face in model.faces:
         if intensity < 0:
             cull = True  # Back face culling is disabled in this version
 
-        screenX, screenY = getOrthographicProjection(p.x, p.y, p.z)
+        screenX, screenY = getPerspectiveProjection(*p.xyz)
         transformedPoints.append(
             Point(
                 screenX,
