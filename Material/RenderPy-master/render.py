@@ -11,7 +11,7 @@ image = Image(width, height, Color(255, 255, 255, 255))
 zBuffer = [-float("inf")] * width * height
 
 # Load the model
-model = Model("data/headset.obj")
+model = Model("data/books.obj")
 model.normalizeGeometry()
 
 
