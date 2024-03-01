@@ -231,6 +231,10 @@ class Quaternion:
         self.y = y
         self.z = z
 
+    @classmethod
+    def identity(cls):
+        return cls(1, 0, 0, 0)
+
     def get_conjugate(self):
         """
         --- Problem 2 Question 2 Part 3 ---
