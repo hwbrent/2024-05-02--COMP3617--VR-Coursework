@@ -1,6 +1,8 @@
 import math
 import numbers
 
+DEFAULT_W_VALUE = 1
+
 
 class Vector(object):
     """A vector with useful vector / matrix operations."""
@@ -8,6 +10,8 @@ class Vector(object):
     def __init__(self, *args):
         if len(args) == 0:
             self.components = (0, 0)
+        elif len(args) == 3:
+            self.components = (*args, DEFAULT_W_VALUE)
         else:
             self.components = args
 
