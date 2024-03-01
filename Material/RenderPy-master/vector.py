@@ -56,19 +56,24 @@ class Vector(object):
             val,
         )
 
+    @property
+    def xyz(self):
+        assert len(self) >= 3
+        return self.components[:3]
+
     def norm(self):
         """Return the norm (magnitude) of this vector."""
-        squaredComponents = sum(math.pow(comp, 2) for comp in self)
+        squaredComponents = sum(math.pow(comp, 2) for comp in self.xyz)
         return math.sqrt(squaredComponents)
 
     def normalize(self):
         """Return a normalized unit vector from this vector."""
         magnitude = self.norm()
-        return Vector(*[comp / magnitude for comp in self])
+        return Vector(*[comp / magnitude for comp in self.xyz], self.w)
 
     def dot(self, other):
         """Return the dot product of this and another vector."""
-        return sum(a * b for a, b in zip(self, other))
+        return sum(a * b for a, b in zip(self.xyz, other.xyz))
 
     def cross(self, other):
         """Return the cross product of this and another vector."""
@@ -78,6 +83,7 @@ class Vector(object):
             (self.y * other.z - self.z * other.y),
             (self.z * other.x - self.x * other.z),
             (self.x * other.y - self.y * other.x),
+            1,
         )
 
     # Overrides
