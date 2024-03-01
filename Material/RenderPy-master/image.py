@@ -147,12 +147,5 @@ class Image(object):
         """
 
         binary_data = self.packData()
-
-        # Create a BytesIO object to wrap the binary data
-        binary_stream = io.BytesIO(binary_data)
-
-        # Open the image using PIL
-        image = PIL_Image.open(binary_stream)
-
-        # Display the image
+        image = PIL_Image.open(io.BytesIO(binary_data))
         image.show()
