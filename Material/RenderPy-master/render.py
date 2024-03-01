@@ -4,7 +4,6 @@ from shape import Point, Line, Triangle
 from vector import Vector
 
 FOCAL_LENGTH = 1
-
 NEAR_CLIP = 0.1
 
 width = 512
@@ -19,6 +18,11 @@ model = Model("data/headset.obj")
 model.normalizeGeometry()
 
 
+# Set the camera back slightly from the origin so that the whole headset is
+# visible.
+camera = Vector(0, 0, -2)
+
+
 def getOrthographicProjection(x, y, z):
     # Convert vertex from world space to screen space
     # by dropping the z-coordinate (Orthographic projection)
@@ -28,14 +32,21 @@ def getOrthographicProjection(x, y, z):
     return screenX, screenY
 
 
-def getPerspectiveProjection(x, y, z):
-    if z < NEAR_CLIP:
-        return
+def getPerspectiveProjection(vector: Vector) -> None | tuple[int, int]:
+    # Get the position of the given vector relative to the camera
+    x, y, z = (vector - camera).xyz
 
-    return (
-        int(((FOCAL_LENGTH * x) / z + 1.0) * width / 2.0),
-        int(((FOCAL_LENGTH * y) / z + 1.0) * height / 2.0),
+    if z < NEAR_CLIP:
+        return None
+
+    project = lambda axis, dimension: int(
+        ((FOCAL_LENGTH * axis) / z + 1.0) * dimension / 2.0
     )
+
+    x = project(x, width)
+    y = project(y, height)
+
+    return x, y
 
 
 def getVertexNormal(vertIndex, faceNormalsByVertex):
@@ -87,7 +98,7 @@ for face in model.faces:
             cull = True  # Back face culling is disabled in this version
 
         # coords = getOrthographicProjection(*p.xyz)
-        coords = getPerspectiveProjection(*p.xyz)
+        coords = getPerspectiveProjection(p)
         if coords is None:
             continue
 
