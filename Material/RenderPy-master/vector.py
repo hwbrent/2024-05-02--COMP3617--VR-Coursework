@@ -269,6 +269,13 @@ class Quaternion:
         )
         # fmt: on
 
+    def __imul__(self, other: "Quaternion"):
+        """
+        Implement behaviour of the *= operator
+        """
+        self.w, self.x, self.y, self.z = self * other
+        return self
+
     def to_euler_angles(self) -> "EulerAngles":
         """
         --- Problem 2 Question 2 Part 2 ---
