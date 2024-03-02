@@ -78,6 +78,7 @@ class Model(object):
 
         if (angle is not None) and (axis is not None):
             self.vertices = [v.rotate(axis, angle) for v in self.vertices]
+
         elif matrix is not None:
             for vertex in self.vertices:
                 rotated = np.matmul(matrix, np.array(vertex.xyz))
