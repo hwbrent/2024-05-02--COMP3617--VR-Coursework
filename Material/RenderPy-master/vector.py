@@ -269,6 +269,36 @@ class Quaternion:
         )
         # fmt: on
 
+    def to_euler_angles(self) -> "EulerAngles":
+        """
+        --- Problem 2 Question 2 Part 2 ---
+
+        Given a `Quaternion`, this function returns the corresponding Euler
+        angles object
+        """
+        w, x, y, z = self
+
+        wx = w * x
+        yz = y * z
+        x2 = math.pow(x, 2)
+        y2 = math.pow(y, 2)
+        roll = math.atan2(2 * (wx + yz), 1 - (2 * (x2 + y2)))
+
+        minus_pi_div_2 = -math.pi / 2
+        wy = w * y
+        xz = x * z
+        two_wy_minus_xz = 2 * (wy - xz)
+        sqrt1 = math.sqrt(1 + two_wy_minus_xz)
+        sqrt2 = math.sqrt(1 - two_wy_minus_xz)
+        pitch = minus_pi_div_2 + (2 * math.atan2(sqrt1, sqrt2))
+
+        wz = w * z
+        xy = x * y
+        z2 = math.pow(z, 2)
+        yaw = math.atan2(2 * (wz + xy), 1 - (2 * (y2 + z2)))
+
+        return EulerAngles(roll, pitch, yaw)
+
 
 class EulerAngles:
     """
@@ -288,60 +318,28 @@ class EulerAngles:
     def __iter__(self):
         return iter((self.roll, self.pitch, self.yaw))
 
+    def to_quaternion(self) -> Quaternion:
+        """
+        --- Problem 2 Question 2 Part 1 ---
 
-def euler_to_quaternion(euler_angles: EulerAngles) -> Quaternion:
-    """
-    --- Problem 2 Question 2 Part 1 ---
+        Converts the Euler angles object to a `Quaternion`.
+        """
 
-    Converts the Euler angles object to a `Quaternion`.
-    """
+        roll, pitch, yaw = self
 
-    roll, pitch, yaw = euler_angles
+        # fmt: off
+        sin_roll  = math.sin(roll  * 0.5)
+        sin_pitch = math.sin(pitch * 0.5)
+        sin_yaw   = math.sin(yaw   * 0.5)
 
-    # fmt: off
-    sin_roll  = math.sin(roll  * 0.5)
-    sin_pitch = math.sin(pitch * 0.5)
-    sin_yaw   = math.sin(yaw   * 0.5)
+        cos_roll  = math.cos(roll  * 0.5)
+        cos_pitch = math.cos(pitch * 0.5)
+        cos_yaw   = math.cos(yaw   * 0.5)
 
-    cos_roll  = math.cos(roll  * 0.5)
-    cos_pitch = math.cos(pitch * 0.5)
-    cos_yaw   = math.cos(yaw   * 0.5)
-
-    return Quaternion(
-        w = (cos_roll * cos_pitch * cos_yaw) + (sin_roll * sin_pitch * sin_yaw),
-        x = (sin_roll * cos_pitch * cos_yaw) - (cos_roll * sin_pitch * sin_yaw),
-        y = (cos_roll * sin_pitch * cos_yaw) + (sin_roll * cos_pitch * sin_yaw),
-        z = (cos_roll * cos_pitch * sin_yaw) - (sin_roll * sin_pitch * cos_yaw),
-    )
-    # fmt: on
-
-
-def quaternion_to_euler(quaternion: Quaternion) -> EulerAngles:
-    """
-    --- Problem 2 Question 2 Part 2 ---
-
-    Given a `Quaternion`, this function returns the corresponding Euler
-    angles object
-    """
-    w, x, y, z = quaternion
-
-    wx = w * x
-    yz = y * z
-    x2 = math.pow(x, 2)
-    y2 = math.pow(y, 2)
-    roll = math.atan2(2 * (wx + yz), 1 - (2 * (x2 + y2)))
-
-    minus_pi_div_2 = -math.pi / 2
-    wy = w * y
-    xz = x * z
-    two_wy_minus_xz = 2 * (wy - xz)
-    sqrt1 = math.sqrt(1 + two_wy_minus_xz)
-    sqrt2 = math.sqrt(1 - two_wy_minus_xz)
-    pitch = minus_pi_div_2 + (2 * math.atan2(sqrt1, sqrt2))
-
-    wz = w * z
-    xy = x * y
-    z2 = math.pow(z, 2)
-    yaw = math.atan2(2 * (wz + xy), 1 - (2 * (y2 + z2)))
-
-    return EulerAngles(roll, pitch, yaw)
+        return Quaternion(
+            w = (cos_roll * cos_pitch * cos_yaw) + (sin_roll * sin_pitch * sin_yaw),
+            x = (sin_roll * cos_pitch * cos_yaw) - (cos_roll * sin_pitch * sin_yaw),
+            y = (cos_roll * sin_pitch * cos_yaw) + (sin_roll * cos_pitch * sin_yaw),
+            z = (cos_roll * cos_pitch * sin_yaw) - (sin_roll * sin_pitch * cos_yaw),
+        )
+        # fmt: on
