@@ -5,6 +5,8 @@
 
 from vector import Vector
 
+import numpy as np
+
 
 class Model(object):
     def __init__(self, file):
@@ -71,6 +73,14 @@ class Model(object):
         """
 
         self.vertices = [v.rotate(axis, angle) for v in self.vertices]
+
+    def apply_rotation(self, matrix: np.ndarray) -> None:
+        """
+        Applies a rotation matrix to all vertices of the model.
+        """
+        for vertex in self.vertices:
+            rotated = np.matmul(matrix, np.array(vertex.xyz))
+            vertex.x, vertex.y, vertex.z = rotated[:3]
 
     def scale(self, sx, sy, sz) -> None:
         """
