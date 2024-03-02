@@ -244,6 +244,26 @@ class Quaternion:
         w, x, y, z = self
         return Quaternion(w, -x, -y, -z)
 
+    def get_magnitude(self):
+        # fmt: off
+        return math.sqrt(
+            sum((
+                math.pow(self.w, 2),
+                math.pow(self.x, 2),
+                math.pow(self.y, 2),
+                math.pow(self.z, 2),
+            ))
+        )
+        # fmt: on
+
+    def normalise(self) -> None:
+        d = self.get_magnitude()
+
+        self.w /= d
+        self.x /= d
+        self.y /= d
+        self.z /= d
+
     def __repr__(self):
         return f"Quaternion(w={self.w}, x={self.x}, y={self.y}, z={self.z})"
 
