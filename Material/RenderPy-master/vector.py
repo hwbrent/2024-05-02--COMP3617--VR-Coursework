@@ -51,14 +51,14 @@ def get_rotation_matrix(axis: str, angle: float) -> np.array:
 class Vector(object):
     """A vector with useful vector / matrix operations."""
 
-    DEFAULT_W_VALUE = 1
+    DEFAULT_W = 1
 
     def __init__(self, *args):
         length = len(args)
         if length == 0:
             self.components = (0, 0)
         elif len(args) == 3:
-            self.components = (*args, self.DEFAULT_W_VALUE)
+            self.components = (*args, self.DEFAULT_W)
         else:
             self.components = args
 
@@ -134,7 +134,7 @@ class Vector(object):
             (self.y * other.z - self.z * other.y),
             (self.z * other.x - self.x * other.z),
             (self.x * other.y - self.y * other.x),
-            self.DEFAULT_W_VALUE,
+            self.DEFAULT_W,
         )
 
     def translate(self, dx: int, dy: int, dz: int):
