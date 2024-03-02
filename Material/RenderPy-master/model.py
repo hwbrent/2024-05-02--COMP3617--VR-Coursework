@@ -65,22 +65,23 @@ class Model(object):
 
         self.vertices = [v.translate(dx, dy, dz) for v in self.vertices]
 
-    def rotate(self, axis: str, angle: float) -> None:
+    def rotate(self, **kwargs) -> None:
         """
         -- Problem 1 Question 3 --
 
         Rotates this `Model` in-place around `axis` by `angle` degrees.
         """
 
-        self.vertices = [v.rotate(axis, angle) for v in self.vertices]
+        angle = kwargs.get("angle")
+        axis = kwargs.get("axis")
+        matrix = kwargs.get("matrix")
 
-    def apply_rotation(self, matrix: np.ndarray) -> None:
-        """
-        Applies a rotation matrix to all vertices of the model.
-        """
-        for vertex in self.vertices:
-            rotated = np.matmul(matrix, np.array(vertex.xyz))
-            vertex.x, vertex.y, vertex.z = rotated[:3]
+        if (angle is not None) and (axis is not None):
+            self.vertices = [v.rotate(axis, angle) for v in self.vertices]
+        elif matrix is not None:
+            for vertex in self.vertices:
+                rotated = np.matmul(matrix, np.array(vertex.xyz))
+                vertex.x, vertex.y, vertex.z = rotated[:3]
 
     def scale(self, sx, sy, sz) -> None:
         """
