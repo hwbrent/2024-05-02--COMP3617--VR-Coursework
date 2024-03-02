@@ -57,3 +57,6 @@ class Dataset:
 
             # Convert each value in the column from degrees to radians
             self.df[col] = self.df[col].apply(lambda value: math.radians(value))
+
+    def __getitem__(self, key):
+        return self.df[key]
