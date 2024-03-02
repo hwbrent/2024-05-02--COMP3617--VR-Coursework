@@ -326,6 +326,43 @@ class Quaternion:
 
         return EulerAngles(roll, pitch, yaw)
 
+    def to_rotation_matrix(self) -> np.ndarray:
+        """
+        Converts this `Quaternion` into a rotation matrix and returns it
+        """
+        w, x, y, z = self
+
+        w2 = w * w
+        x2 = x * x
+        xy = x * y
+        wz = w * z
+        xz = x * z
+        wy = w * y
+        y2 = y * y
+        yz = y * z
+        wx = w * x
+        z2 = z * z
+
+        # fmt: off
+        r00 = (2 * (w2 + x2)) - 1
+        r01 =  2 * (xy - wz)
+        r02 =  2 * (xz + wy)
+
+        r10 =  2 * (xy + wz)
+        r11 = (2 * (w2 + y2)) - 1
+        r12 =  2 * (yz - wx)
+
+        r20 =  2 * (xz - wy)
+        r21 =  2 * (yz + wx)
+        r22 = (2 * (w2 + z2)) - 1
+
+        return np.array([
+            [r00, r01, r02],
+            [r10, r11, r12],
+            [r20, r21, r22]
+        ])
+        # fmt: on
+
 
 class EulerAngles:
     """
