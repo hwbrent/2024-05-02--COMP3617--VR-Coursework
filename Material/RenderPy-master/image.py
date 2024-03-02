@@ -9,8 +9,8 @@
 
 import zlib, struct
 
-from PIL import Image as PIL_Image
-import io
+import cv2
+import numpy as np
 
 
 class Color(object):
@@ -147,5 +147,15 @@ class Image(object):
         """
 
         binary_data = self.packData()
-        image = PIL_Image.open(io.BytesIO(binary_data))
-        image.show()
+
+        image = cv2.imdecode(
+            np.frombuffer(binary_data, np.uint8),
+            cv2.IMREAD_COLOR,
+        )
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # convert to RGB
+
+        # Get rid of any previous images being displayed
+        cv2.destroyAllWindows()
+
+        cv2.imshow("Image", image)
+        cv2.waitKey(0)  # Wait for keydown
