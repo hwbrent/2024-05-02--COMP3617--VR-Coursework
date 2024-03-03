@@ -3,7 +3,8 @@ import numpy as np
 from image import Image, Color
 from model import Model
 from shape import Point, Line, Triangle
-from vector import Vector
+from vector import Vector, Quaternion, EulerAngles
+from dataset import Dataset
 
 FOCAL_LENGTH = 1
 NEAR_CLIP = 0.1
@@ -130,11 +131,53 @@ def render(model: Model) -> None:
 
 
 def main() -> None:
-    # Load the model
     model = Model("data/headset.obj")
     model.normalizeGeometry()
 
-    render(model)
+    dataset = Dataset()
+
+    # The data we need in the render loop
+    # fmt: off
+    data = dataset[[
+        "time",
+        "gyroscope.X",
+        "gyroscope.Y",
+        "gyroscope.Z",
+    ]]
+    # fmt: on
+
+    orientation = Quaternion.identity()
+    prev_time = None
+
+    for entry in data.itertuples():
+        _, time, x, y, z = entry
+
+        """
+        --- Problem 3 Question 1 ---
+
+        Implement a dead reckoning filter (using only the gyroscope-measured
+        rotational rate)
+        """
+        if prev_time is not None:
+            time_diff = time - prev_time
+
+            # Convert angular speed to angle by multiplying by time_diff
+            angles = EulerAngles(
+                x * time_diff,
+                y * time_diff,
+                z * time_diff,
+            )
+
+            orientation *= angles.to_quaternion()
+            orientation.normalise()
+
+            # Reflect orientation in model
+            model.rotate(matrix=orientation.to_rotation_matrix())
+
+            # Show the model
+            render(model)
+
+        prev_time = time
 
 
 if __name__ == "__main__":
