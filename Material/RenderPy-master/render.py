@@ -143,6 +143,9 @@ def main() -> None:
         "gyroscope.X",
         "gyroscope.Y",
         "gyroscope.Z",
+        "accelerometer.X",
+        "accelerometer.Y",
+        "accelerometer.Z",
     ]]
     # fmt: on
 
@@ -150,7 +153,9 @@ def main() -> None:
     prev_time = None
 
     for entry in data.itertuples():
-        _, time, x, y, z = entry
+        time = entry[0]
+        gyroscope = entry[2:5]
+        accelerometer = entry[5:8]
 
         """
         --- Problem 3 Question 1 ---
@@ -162,10 +167,11 @@ def main() -> None:
             time_diff = time - prev_time
 
             # Convert angular speed to angle by multiplying by time_diff
+            gx, gy, gz = gyroscope
             angles = EulerAngles(
-                x * time_diff,
-                y * time_diff,
-                z * time_diff,
+                gx * time_diff,
+                gy * time_diff,
+                gz * time_diff,
             )
 
             orientation *= angles.to_quaternion()
