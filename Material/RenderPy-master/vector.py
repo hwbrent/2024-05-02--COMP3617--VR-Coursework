@@ -290,6 +290,16 @@ class Quaternion:
     def __iter__(self):
         return iter((self.w, self.x, self.y, self.z))
 
+    def __add__(self, other) -> "Quaternion":
+        w1, x1, y1, z1 = self
+
+        if type(other) == type(self):
+            w2, x2, y2, z2 = other
+            return Quaternion(w1 + w2, x1 + x2, y1 + y2, z1 + z2)
+
+        elif isinstance(other, numbers.Real):
+            return Quaternion(w1 + other, x1 + other, y1 + other, z1 + other)
+
     def __mul__(self, other):
         """
         --- Problem 2 Question 2 Part 4 ---
