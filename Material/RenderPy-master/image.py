@@ -154,8 +154,5 @@ class Image(object):
         )
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # convert to RGB
 
-        # Get rid of any previous images being displayed
-        cv2.destroyAllWindows()
-
         cv2.imshow("Image", image)
-        cv2.waitKey(0)  # Wait for keydown
+        cv2.waitKey(1)
