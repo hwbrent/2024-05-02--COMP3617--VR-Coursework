@@ -69,20 +69,18 @@ class Model(object):
         """
         -- Problem 1 Question 3 --
 
-        Rotates this `Model` in-place around `axis` by `angle` degrees.
+        Rotates this `Model` in-place either:
+        1) around `axis` by `angle`
+        2) by a `matrix`
         """
+        keys = sorted(kwargs.keys())
 
-        angle = kwargs.get("angle")
-        axis = kwargs.get("axis")
-        matrix = kwargs.get("matrix")
+        # The two use-cases of this function
+        case1 = keys == ["angle", "axis"]
+        case2 = keys == ["matrix"]
+        assert case1 or case2
 
-        if (angle is not None) and (axis is not None):
-            self.vertices = [v.rotate(axis, angle) for v in self.vertices]
-
-        elif matrix is not None:
-            for vertex in self.vertices:
-                rotated = np.matmul(matrix, np.array(vertex.xyz))
-                vertex.x, vertex.y, vertex.z = rotated[:3]
+        self.vertices = [v.rotate(**kwargs) for v in self.vertices]
 
     def scale(self, sx, sy, sz) -> None:
         """

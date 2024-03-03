@@ -158,18 +158,38 @@ class Vector(object):
 
         return Vector(*new)
 
-    def rotate(self, axis: str, angle: float):
+    def rotate(self, **kwargs) -> "Vector":
         """
         -- Problem 1 Question 3 --
 
-        Return a new vector equal to this one rotated around `axis` by `angle`
+        Return a new vector equal to this one rotated either:
+        1) around `axis` by `angle`
+        2) by a `matrix`
         """
 
-        matrix = get_rotation_matrix(axis, angle)
-        rotated = np.matmul(matrix, self.np_array)
-        vector = Vector(*rotated)
+        angle = kwargs.get("angle")
+        axis = kwargs.get("axis")
+        matrix = kwargs.get("matrix")
 
-        return vector
+        # Anonymous function to check if param was provided (i.e. key-value
+        # pair was found)
+        provided = lambda x: x is not None
+
+        # The two use-cases of this function
+        case1 = provided(angle) and provided(axis)
+        case2 = provided(matrix)
+        assert case1 or case2
+
+        r_matrix = get_rotation_matrix(axis, angle) if case1 else matrix
+        vector = (
+            np.array(self.xyz)
+            if (case2 and r_matrix.shape == (3, 3))
+            else self.np_array
+        )
+
+        rotated = np.matmul(r_matrix, vector)
+
+        return Vector(*rotated)
 
     def scale(self, sx, sy, sz):
         """
