@@ -174,8 +174,8 @@ def main() -> None:
             # Reflect orientation in model
             model.rotate(matrix=orientation.to_rotation_matrix())
 
-            # Show the model
-            render(model)
+        # Show the model
+        render(model)
 
         prev_time = time
 
