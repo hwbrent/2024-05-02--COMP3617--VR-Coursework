@@ -157,27 +157,22 @@ def main() -> None:
         gyroscope = entry[2:5]
         accelerometer = entry[5:8]
 
-        """
-        --- Problem 3 Question 1 ---
-
-        Implement a dead reckoning filter (using only the gyroscope-measured
-        rotational rate)
-        """
         if prev_time is not None:
             time_diff = time - prev_time
 
-            # Convert angular speed to angle by multiplying by time_diff
-            gx, gy, gz = gyroscope
-            angles = EulerAngles(
-                gx * time_diff,
-                gy * time_diff,
-                gz * time_diff,
+            """ Problem 3 Question 1 """
+            g_x, g_y, g_z = gyroscope
+            g_angles = EulerAngles(
+                g_x * time_diff,
+                g_y * time_diff,
+                g_z * time_diff,
             )
-
-            orientation *= angles.to_quaternion()
-            orientation.normalise()
+            g_orientation = g_angles.to_quaternion()
 
             # Reflect orientation in model
+            orientation *= g_orientation
+
+            orientation.normalise()
             model.rotate(matrix=orientation.to_rotation_matrix())
 
         # Show the model
