@@ -171,9 +171,14 @@ def main() -> None:
 
             """ Problem 3 Question 2 """
             a_x, a_y, a_z = accelerometer
+
             # Transform acceleration measurements into the global frame
             a_local = Quaternion(0, a_x, a_y, a_z)
             a_global = a_local * orientation * orientation.get_conjugate()
+
+            # Calculate the tilt axis
+            tilt_axis_local = Quaternion(0, *gyroscope)
+            tilt_axis_global = tilt_axis_local * orientation * orientation.conjugate()
 
             # Reflect orientation in model
             orientation *= g_orientation
