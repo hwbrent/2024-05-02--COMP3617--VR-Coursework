@@ -205,6 +205,8 @@ def main() -> None:
 
         prev_time = time
 
+    Image.clean_up()
+
 
 if __name__ == "__main__":
     main()

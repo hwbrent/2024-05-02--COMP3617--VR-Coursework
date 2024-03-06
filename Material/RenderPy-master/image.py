@@ -156,3 +156,7 @@ class Image(object):
 
         cv2.imshow("Image", image)
         cv2.waitKey(1)
+
+    @staticmethod
+    def clean_up() -> None:
+        return cv2.destroyAllWindows()
