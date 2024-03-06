@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 from image import Image, Color
@@ -179,6 +181,12 @@ def main() -> None:
             # Calculate the tilt axis
             tilt_axis_local = Quaternion(0, *gyroscope)
             tilt_axis_global = tilt_axis_local * orientation * orientation.conjugate()
+
+            # Find the angle φ between the up vector and the vector obtained
+            # from the accelerometer
+            up = Vector(0, 0, 1).normalize()
+            a_vector = Vector(*accelerometer).normalize()
+            phi = math.acos(up.dot(a_vector))  # radians
 
             # Reflect orientation in model
             orientation *= g_orientation
