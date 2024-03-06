@@ -405,6 +405,41 @@ class Quaternion:
         ])
         # fmt: on
 
+    @classmethod
+    def slerp(cls, qa: "Quaternion", qb: "Quaternion", t: float = 0.5) -> "Quaternion":
+        """
+        Returns the Spherical Linear intERPolation between quaternions `qa` and `qb`
+
+        Algorithm is from here:
+        - https://euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
+        """
+        # Calculate angle between them.
+        cosHalfTheta = qa.w * qb.w + qa.x * qb.x + qa.y * qb.y + qa.z * qb.z
+        # if qa=qb or qa=-qb then theta = 0 and we can return qa
+        if abs(cosHalfTheta) >= 1.0:
+            return Quaternion(qa.w, qa.x, qa.y, qa.z)
+        # Calculate temporary values.
+        halfTheta = math.acos(cosHalfTheta)
+        sinHalfTheta = math.sqrt(1.0 - cosHalfTheta * cosHalfTheta)
+        # if theta = 180 degrees then result is not fully defined
+        # we could rotate around any axis normal to qa or qb
+        if math.fabs(sinHalfTheta) < 0.001:  # fabs is floating point absolute
+            return Quaternion(
+                w=(qa.w * 0.5) + (qb.w * 0.5),
+                x=(qa.x * 0.5) + (qb.x * 0.5),
+                y=(qa.y * 0.5) + (qb.y * 0.5),
+                z=(qa.z * 0.5) + (qb.z * 0.5),
+            )
+        ratioA = math.sin((1 - t) * halfTheta) / sinHalfTheta
+        ratioB = math.sin(t * halfTheta) / sinHalfTheta
+        # calculate Quaternion.
+        return Quaternion(
+            w=(qa.w * ratioA) + (qb.w * ratioB),
+            x=(qa.x * ratioA) + (qb.x * ratioB),
+            y=(qa.y * ratioA) + (qb.y * ratioB),
+            z=(qa.z * ratioA) + (qb.z * ratioB),
+        )
+
 
 class EulerAngles:
     """
