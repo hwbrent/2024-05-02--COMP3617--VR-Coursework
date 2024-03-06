@@ -9,7 +9,12 @@ from dataset import Dataset
 FOCAL_LENGTH = 1
 NEAR_CLIP = 0.1
 
-ALPHA = 0.02
+# TODO: Problem 3 Question 3
+# Try a few different alpha values (e.g., 0.01, 0.1, ...), investigate and
+# comment on their effect on drift compensation in your report. Implement
+# any other processing of the accelerometer values that you consider important
+# / necessary and discuss this in the report.
+ALPHA = 0.5
 
 WIDTH = 512
 HEIGHT = 512
