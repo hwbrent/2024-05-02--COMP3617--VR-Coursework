@@ -180,7 +180,9 @@ def main() -> None:
 
             # Calculate the tilt axis
             tilt_axis_local = Quaternion(0, *gyroscope)
-            tilt_axis_global = tilt_axis_local * orientation * orientation.conjugate()
+            tilt_axis_global = (
+                tilt_axis_local * orientation * orientation.get_conjugate()
+            )
 
             # Find the angle φ between the up vector and the vector obtained
             # from the accelerometer
