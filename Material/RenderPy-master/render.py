@@ -157,7 +157,7 @@ def main() -> None:
     prev_time = None
 
     for entry in data.itertuples():
-        time = entry[0]
+        time = entry[1]
         gyroscope = entry[2:5]
         accelerometer = entry[5:8]
 
