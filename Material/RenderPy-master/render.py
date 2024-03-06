@@ -169,6 +169,12 @@ def main() -> None:
             )
             g_orientation = g_angles.to_quaternion()
 
+            """ Problem 3 Question 2 """
+            a_x, a_y, a_z = accelerometer
+            # Transform acceleration measurements into the global frame
+            a_local = Quaternion(0, a_x, a_y, a_z)
+            a_global = a_local * orientation * orientation.get_conjugate()
+
             # Reflect orientation in model
             orientation *= g_orientation
 
