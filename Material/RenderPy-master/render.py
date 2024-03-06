@@ -1,7 +1,5 @@
 import math
 
-import numpy as np
-
 from image import Image, Color
 from model import Model
 from shape import Point, Line, Triangle
