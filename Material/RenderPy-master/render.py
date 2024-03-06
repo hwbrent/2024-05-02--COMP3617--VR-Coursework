@@ -148,54 +148,57 @@ def main() -> None:
 
     for row in dataset:
         time = row[1]
+
+        if prev_time is None:
+            prev_time = time
+            render(model)
+            continue
+
         gyroscope = row[2:5]
         accelerometer = row[5:8]
 
-        if prev_time is not None:
-            time_diff = time - prev_time
+        time_diff = time - prev_time
 
-            """ Problem 3 Question 1 """
-            g_x, g_y, g_z = gyroscope
-            g_angles = EulerAngles(
-                g_x * time_diff,
-                g_y * time_diff,
-                g_z * time_diff,
-            )
-            g_orientation = g_angles.to_quaternion()
-            orientation *= g_orientation
+        """ Problem 3 Question 1 """
+        g_x, g_y, g_z = gyroscope
+        g_angles = EulerAngles(
+            g_x * time_diff,
+            g_y * time_diff,
+            g_z * time_diff,
+        )
+        g_orientation = g_angles.to_quaternion()
+        orientation *= g_orientation
 
-            """ Problem 3 Question 2 """
-            a_x, a_y, a_z = accelerometer
+        """ Problem 3 Question 2 """
+        a_x, a_y, a_z = accelerometer
 
-            # Transform acceleration measurements into the global frame
-            a_local = Quaternion(0, a_x, a_y, a_z)
-            a_global = a_local * orientation * orientation.get_conjugate()
+        # Transform acceleration measurements into the global frame
+        a_local = Quaternion(0, a_x, a_y, a_z)
+        a_global = a_local * orientation * orientation.get_conjugate()
 
-            # Calculate the tilt axis
-            tilt_axis_local = Quaternion(0, *gyroscope)
-            tilt_axis_global = (
-                tilt_axis_local * orientation * orientation.get_conjugate()
-            )
+        # Calculate the tilt axis
+        tilt_axis_local = Quaternion(0, *gyroscope)
+        tilt_axis_global = tilt_axis_local * orientation * orientation.get_conjugate()
 
-            # Find the angle φ between the up vector and the vector obtained
-            # from the accelerometer
-            up = Vector(0, 0, 1)
-            acc_vector_global = Vector(a_global.x, a_global.y, a_global.z)
-            phi = math.acos(
-                up.normalize().dot(
-                    acc_vector_global.normalize(),
-                ),
-            )
+        # Find the angle φ between the up vector and the vector obtained
+        # from the accelerometer
+        up = Vector(0, 0, 1)
+        acc_vector_global = Vector(a_global.x, a_global.y, a_global.z)
+        phi = math.acos(
+            up.normalize().dot(
+                acc_vector_global.normalize(),
+            ),
+        )
 
-            # Use the complementary filter to fuse the gyroscope estimation
-            # and the accelerometer estimation
-            pitch = phi if (acc_vector_global.z < 0) else -phi
-            correction = EulerAngles(0, pitch, 0).to_quaternion()
-            fused = Quaternion.slerp(orientation, orientation * correction, ALPHA)
-            orientation = fused
+        # Use the complementary filter to fuse the gyroscope estimation
+        # and the accelerometer estimation
+        pitch = phi if (acc_vector_global.z < 0) else -phi
+        correction = EulerAngles(0, pitch, 0).to_quaternion()
+        fused = Quaternion.slerp(orientation, orientation * correction, ALPHA)
+        orientation = fused
 
-            orientation.normalise()
-            model.rotate(matrix=orientation.to_rotation_matrix())
+        orientation.normalise()
+        model.rotate(matrix=orientation.to_rotation_matrix())
 
         # Show the model
         render(model)
