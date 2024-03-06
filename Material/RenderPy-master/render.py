@@ -11,7 +11,7 @@ from dataset import Dataset
 FOCAL_LENGTH = 1
 NEAR_CLIP = 0.1
 
-ALPHA = 0.98  # Complementary filter coefficient
+ALPHA = 0.02
 
 WIDTH = 512
 HEIGHT = 512
@@ -201,7 +201,7 @@ def main() -> None:
             # and the accelerometer estimation
             pitch = phi if (acc_vector_global.z < 0) else -phi
             correction = EulerAngles(0, pitch, 0).to_quaternion()
-            fused = Quaternion.slerp(orientation, orientation * correction, 1 - ALPHA)
+            fused = Quaternion.slerp(orientation, orientation * correction, ALPHA)
             orientation = fused
 
             orientation.normalise()
