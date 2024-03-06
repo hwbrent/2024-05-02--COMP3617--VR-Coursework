@@ -11,6 +11,8 @@ from dataset import Dataset
 FOCAL_LENGTH = 1
 NEAR_CLIP = 0.1
 
+ALPHA = 0.98  # Complementary filter coefficient
+
 WIDTH = 512
 HEIGHT = 512
 
@@ -170,6 +172,7 @@ def main() -> None:
                 g_z * time_diff,
             )
             g_orientation = g_angles.to_quaternion()
+            orientation *= g_orientation
 
             """ Problem 3 Question 2 """
             a_x, a_y, a_z = accelerometer
@@ -186,12 +189,20 @@ def main() -> None:
 
             # Find the angle φ between the up vector and the vector obtained
             # from the accelerometer
-            up = Vector(0, 0, 1).normalize()
-            a_vector = Vector(*accelerometer).normalize()
-            phi = math.acos(up.dot(a_vector))  # radians
+            up = Vector(0, 0, 1)
+            acc_vector_global = Vector(a_global.x, a_global.y, a_global.z)
+            phi = math.acos(
+                up.normalize().dot(
+                    acc_vector_global.normalize(),
+                ),
+            )
 
-            # Reflect orientation in model
-            orientation *= g_orientation
+            # Use the complementary filter to fuse the gyroscope estimation
+            # and the accelerometer estimation
+            pitch = phi if (acc_vector_global.z < 0) else -phi
+            correction = EulerAngles(0, pitch, 0).to_quaternion()
+            fused = Quaternion.slerp(orientation, orientation * correction, 1 - ALPHA)
+            orientation = fused
 
             orientation.normalise()
             model.rotate(matrix=orientation.to_rotation_matrix())
