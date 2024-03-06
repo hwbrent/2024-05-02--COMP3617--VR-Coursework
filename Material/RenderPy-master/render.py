@@ -150,6 +150,7 @@ def main() -> None:
         time = row[1]
         gyroscope = row[2:5]
         accelerometer = row[5:8]
+        magnetometer = row[8:]
 
         if prev_time is not None:
             time_diff = time - prev_time
