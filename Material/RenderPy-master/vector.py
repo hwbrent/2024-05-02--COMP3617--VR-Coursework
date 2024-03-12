@@ -205,8 +205,7 @@ class Vector(object):
         if type(other) == type(self):
             return self.dot(other)
         elif isinstance(other, numbers.Real):
-            product = tuple(comp * other for comp in self)
-            return Vector(*product)
+            return Vector(*(self.components * other))
 
     def __truediv__(self, other):
         if isinstance(other, numbers.Real):
