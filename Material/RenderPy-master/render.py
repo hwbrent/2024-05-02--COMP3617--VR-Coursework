@@ -14,7 +14,7 @@ NEAR_CLIP = 0.1
 # comment on their effect on drift compensation in your report. Implement
 # any other processing of the accelerometer values that you consider important
 # / necessary and discuss this in the report.
-ALPHA = 0.5
+ALPHA = 0.01
 
 WIDTH = 512
 HEIGHT = 512
