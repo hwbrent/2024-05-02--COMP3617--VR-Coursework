@@ -54,13 +54,12 @@ class Vector(object):
     DEFAULT_W = 1
 
     def __init__(self, *args):
-        length = len(args)
-        if length == 0:
-            self.components = (0, 0)
+        if len(args) == 0:
+            self.components = np.array([0, 0, 0, self.DEFAULT_W])
         elif len(args) == 3:
-            self.components = (*args, self.DEFAULT_W)
+            self.components = np.array([*args, self.DEFAULT_W])
         else:
-            self.components = args
+            self.components = np.array(args)
 
     @property
     def x(self):
@@ -69,7 +68,7 @@ class Vector(object):
 
     @x.setter
     def x(self, val):
-        self.components = (val, self.components[1], self.components[2])
+        self.components[0] = val
 
     @property
     def y(self):
@@ -78,7 +77,7 @@ class Vector(object):
 
     @y.setter
     def y(self, val):
-        self.components = (self.components[0], val, self.components[2])
+        self.components[1] = val
 
     @property
     def z(self):
@@ -87,7 +86,7 @@ class Vector(object):
 
     @z.setter
     def z(self, val):
-        self.components = (self.components[0], self.components[1], val)
+        self.components[2] = val
 
     @property
     def w(self):
@@ -96,12 +95,7 @@ class Vector(object):
 
     @w.setter
     def w(self, val):
-        self.components = (
-            self.components[0],
-            self.components[1],
-            self.components[2],
-            val,
-        )
+        self.components[3] = val
 
     @property
     def xyz(self):
