@@ -110,10 +110,10 @@ class Vector(object):
         """Return the norm (magnitude) of this vector."""
         return np.linalg.norm(self.xyz)
 
-    def normalize(self):
+    def normalize(self) -> "Vector":
         """Return a normalized unit vector from this vector."""
         magnitude = self.norm()
-        return Vector(*[comp / magnitude for comp in self.xyz], self.w)
+        return Vector(*(self.xyz / magnitude), self.w)
 
     def dot(self, other):
         """Return the dot product of this and another vector."""
