@@ -10,7 +10,7 @@ import numpy as np
 
 class Model(object):
     def __init__(self, file):
-        self.vertices: list[Vector] = []
+        self.vertices = np.array([])
         self.faces = []
         self.scale = [0, 0, 0]
         self.rot = [0, 0, 0]
@@ -28,7 +28,7 @@ class Model(object):
             # Vertices
             if segments[0] == "v":
                 vertex = Vector(*[float(i) for i in segments[1:4]])
-                self.vertices.append(vertex)
+                self.vertices = np.append(self.vertices, vertex)
 
             # Faces
             elif segments[0] == "f":
