@@ -125,7 +125,7 @@ class Vector(object):
         assert len(self) == 4, "Cross product only implemented for 3D vectors."
         return Vector(*np.cross(self.xyz, other.xyz), self.DEFAULT_W)
 
-    def translate(self, dx: int, dy: int, dz: int):
+    def translate(self, dx: int, dy: int, dz: int) -> "Vector":
         """
         -- Problem 1 Question 3 --
 
@@ -142,7 +142,7 @@ class Vector(object):
             ]
         )
 
-        new = np.matmul(matrix, self.np_array)
+        new = np.matmul(matrix, self.components)
 
         return Vector(*new)
 
