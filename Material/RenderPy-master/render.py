@@ -143,23 +143,10 @@ def main() -> None:
 
     dataset = Dataset()
 
-    # The data we need in the render loop
-    # fmt: off
-    data = dataset[[
-        "time",
-        "gyroscope.X",
-        "gyroscope.Y",
-        "gyroscope.Z",
-        "accelerometer.X",
-        "accelerometer.Y",
-        "accelerometer.Z",
-    ]]
-    # fmt: on
-
     orientation = Quaternion.identity()
     prev_time = None
 
-    for entry in data.itertuples():
+    for entry in dataset.df.itertuples():
         time = entry[1]
 
         if prev_time is None:
