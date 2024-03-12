@@ -209,8 +209,7 @@ class Vector(object):
 
     def __truediv__(self, other):
         if isinstance(other, numbers.Real):
-            value = tuple(comp / other for comp in self)
-            return Vector(*value)
+            return Vector(*(self.components / other))
 
     def __add__(self, other):
         value = tuple(a + b for a, b in zip(self, other))
