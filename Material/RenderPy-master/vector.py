@@ -119,16 +119,11 @@ class Vector(object):
         """Return the dot product of this and another vector."""
         return np.dot(self.xyz, other.xyz)
 
-    def cross(self, other):
+    def cross(self, other: "Vector") -> "Vector":
         """Return the cross product of this and another vector."""
         assert len(self) == len(other), "Vectors must be the same size."
         assert len(self) == 4, "Cross product only implemented for 3D vectors."
-        return Vector(
-            (self.y * other.z - self.z * other.y),
-            (self.z * other.x - self.x * other.z),
-            (self.x * other.y - self.y * other.x),
-            self.DEFAULT_W,
-        )
+        return Vector(*np.cross(self.xyz, other.xyz), self.DEFAULT_W)
 
     def translate(self, dx: int, dy: int, dz: int):
         """
