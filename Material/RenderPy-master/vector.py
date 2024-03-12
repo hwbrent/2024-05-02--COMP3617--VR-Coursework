@@ -211,9 +211,8 @@ class Vector(object):
         if isinstance(other, numbers.Real):
             return Vector(*(self.components / other))
 
-    def __add__(self, other):
-        value = tuple(a + b for a, b in zip(self, other))
-        return Vector(*value)
+    def __add__(self, other: "Vector") -> "Vector":
+        return Vector(*(self.components + other.components))
 
     def __sub__(self, other):
         value = tuple(a - b for a, b in zip(self, other))
