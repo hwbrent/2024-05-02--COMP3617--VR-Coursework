@@ -115,9 +115,9 @@ class Vector(object):
         magnitude = self.norm()
         return Vector(*(self.xyz / magnitude), self.w)
 
-    def dot(self, other):
+    def dot(self, other: "Vector"):
         """Return the dot product of this and another vector."""
-        return sum(a * b for a, b in zip(self.xyz, other.xyz))
+        return np.dot(self.xyz, other.xyz)
 
     def cross(self, other):
         """Return the cross product of this and another vector."""
