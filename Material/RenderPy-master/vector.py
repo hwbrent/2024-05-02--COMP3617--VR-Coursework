@@ -108,8 +108,7 @@ class Vector(object):
 
     def norm(self):
         """Return the norm (magnitude) of this vector."""
-        squaredComponents = sum(math.pow(comp, 2) for comp in self.xyz)
-        return math.sqrt(squaredComponents)
+        return np.linalg.norm(self.xyz)
 
     def normalize(self):
         """Return a normalized unit vector from this vector."""
