@@ -102,10 +102,6 @@ class Vector(object):
         assert len(self) >= 3
         return self.components[:3]
 
-    @property
-    def np_array(self):
-        return np.array(self.components)
-
     def norm(self):
         """Return the norm (magnitude) of this vector."""
         return np.linalg.norm(self.xyz)
@@ -192,7 +188,7 @@ class Vector(object):
             ]
         )
 
-        scaled = np.matmul(matrix, self.np_array)
+        scaled = np.matmul(matrix, self.components)
         vector = Vector(*scaled)
 
         return vector
