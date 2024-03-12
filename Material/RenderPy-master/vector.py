@@ -169,11 +169,7 @@ class Vector(object):
         assert case1 or case2
 
         r_matrix = get_rotation_matrix(axis, angle) if case1 else matrix
-        vector = (
-            np.array(self.xyz)
-            if (case2 and r_matrix.shape == (3, 3))
-            else self.np_array
-        )
+        vector = self.xyz if (case2 and r_matrix.shape == (3, 3)) else self.components
 
         rotated = np.matmul(r_matrix, vector)
 
