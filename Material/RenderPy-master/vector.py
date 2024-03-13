@@ -54,13 +54,12 @@ class Vector(object):
     DEFAULT_W = 1
 
     def __init__(self, *args):
-        length = len(args)
-        if length == 0:
-            self.components = (0, 0)
+        if len(args) == 0:
+            self.components = np.array([0, 0, 0, self.DEFAULT_W])
         elif len(args) == 3:
-            self.components = (*args, self.DEFAULT_W)
+            self.components = np.array([*args, self.DEFAULT_W])
         else:
-            self.components = args
+            self.components = np.array(args)
 
     @property
     def x(self):
@@ -69,7 +68,7 @@ class Vector(object):
 
     @x.setter
     def x(self, val):
-        self.components = (val, self.components[1], self.components[2])
+        self.components[0] = val
 
     @property
     def y(self):
@@ -78,7 +77,7 @@ class Vector(object):
 
     @y.setter
     def y(self, val):
-        self.components = (self.components[0], val, self.components[2])
+        self.components[1] = val
 
     @property
     def z(self):
@@ -87,7 +86,7 @@ class Vector(object):
 
     @z.setter
     def z(self, val):
-        self.components = (self.components[0], self.components[1], val)
+        self.components[2] = val
 
     @property
     def w(self):
@@ -96,48 +95,33 @@ class Vector(object):
 
     @w.setter
     def w(self, val):
-        self.components = (
-            self.components[0],
-            self.components[1],
-            self.components[2],
-            val,
-        )
+        self.components[3] = val
 
     @property
     def xyz(self):
         assert len(self) >= 3
         return self.components[:3]
 
-    @property
-    def np_array(self):
-        return np.array(self.components)
-
     def norm(self):
         """Return the norm (magnitude) of this vector."""
-        squaredComponents = sum(math.pow(comp, 2) for comp in self.xyz)
-        return math.sqrt(squaredComponents)
+        return np.linalg.norm(self.xyz)
 
-    def normalize(self):
+    def normalize(self) -> "Vector":
         """Return a normalized unit vector from this vector."""
         magnitude = self.norm()
-        return Vector(*[comp / magnitude for comp in self.xyz], self.w)
+        return Vector(*(self.xyz / magnitude), self.w)
 
-    def dot(self, other):
+    def dot(self, other: "Vector"):
         """Return the dot product of this and another vector."""
-        return sum(a * b for a, b in zip(self.xyz, other.xyz))
+        return np.dot(self.xyz, other.xyz)
 
-    def cross(self, other):
+    def cross(self, other: "Vector") -> "Vector":
         """Return the cross product of this and another vector."""
         assert len(self) == len(other), "Vectors must be the same size."
         assert len(self) == 4, "Cross product only implemented for 3D vectors."
-        return Vector(
-            (self.y * other.z - self.z * other.y),
-            (self.z * other.x - self.x * other.z),
-            (self.x * other.y - self.y * other.x),
-            self.DEFAULT_W,
-        )
+        return Vector(*np.cross(self.xyz, other.xyz), self.DEFAULT_W)
 
-    def translate(self, dx: int, dy: int, dz: int):
+    def translate(self, dx: int, dy: int, dz: int) -> "Vector":
         """
         -- Problem 1 Question 3 --
 
@@ -154,7 +138,7 @@ class Vector(object):
             ]
         )
 
-        new = np.matmul(matrix, self.np_array)
+        new = np.matmul(matrix, self.components)
 
         return Vector(*new)
 
@@ -181,11 +165,7 @@ class Vector(object):
         assert case1 or case2
 
         r_matrix = get_rotation_matrix(axis, angle) if case1 else matrix
-        vector = (
-            np.array(self.xyz)
-            if (case2 and r_matrix.shape == (3, 3))
-            else self.np_array
-        )
+        vector = self.xyz if (case2 and r_matrix.shape == (3, 3)) else self.components
 
         rotated = np.matmul(r_matrix, vector)
 
@@ -208,7 +188,7 @@ class Vector(object):
             ]
         )
 
-        scaled = np.matmul(matrix, self.np_array)
+        scaled = np.matmul(matrix, self.components)
         vector = Vector(*scaled)
 
         return vector
@@ -221,21 +201,17 @@ class Vector(object):
         if type(other) == type(self):
             return self.dot(other)
         elif isinstance(other, numbers.Real):
-            product = tuple(comp * other for comp in self)
-            return Vector(*product)
+            return Vector(*(self.components * other))
 
     def __truediv__(self, other):
         if isinstance(other, numbers.Real):
-            value = tuple(comp / other for comp in self)
-            return Vector(*value)
+            return Vector(*(self.components / other))
 
-    def __add__(self, other):
-        value = tuple(a + b for a, b in zip(self, other))
-        return Vector(*value)
+    def __add__(self, other: "Vector") -> "Vector":
+        return Vector(*(self.components + other.components))
 
-    def __sub__(self, other):
-        value = tuple(a - b for a, b in zip(self, other))
-        return Vector(*value)
+    def __sub__(self, other: "Vector") -> "Vector":
+        return Vector(*(self.components - other.components))
 
     def __len__(self):
         return len(self.components)

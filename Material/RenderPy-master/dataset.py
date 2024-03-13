@@ -60,19 +60,3 @@ class Dataset:
 
     def __getitem__(self, key):
         return self.df[key]
-
-    def __iter__(self):
-        self._i = 1
-        self._len = len(self.df)
-        return self
-
-    def __next__(self):
-        if self._i < self._len:
-            row = self.df.iloc[self._i]
-            row = (self._i, *row)
-            self._i += 1
-            return row
-        else:
-            del self._i
-            del self._len
-            raise StopIteration

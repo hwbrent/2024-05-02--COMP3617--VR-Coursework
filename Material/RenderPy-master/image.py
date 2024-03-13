@@ -139,6 +139,15 @@ class Image(object):
         png.write(self.packData())
         png.close()
 
+    def to_cv2(self) -> cv2.typing.MatLike:
+        """
+        Returns this image in a format that `opencv`'s APIs recognise.
+        """
+        return cv2.imdecode(
+            np.frombuffer(self.packData(), np.uint8),
+            cv2.IMREAD_COLOR,
+        )
+
     def show(self) -> None:
         """
         --- Problem 1 Question 1 ---
@@ -146,13 +155,7 @@ class Image(object):
         Enable real time output of the frame buffer on the screen
         """
 
-        binary_data = self.packData()
-
-        image = cv2.imdecode(
-            np.frombuffer(binary_data, np.uint8),
-            cv2.IMREAD_COLOR,
-        )
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # convert to RGB
+        image = cv2.cvtColor(self.to_cv2(), cv2.COLOR_BGR2RGB)  # convert to RGB
 
         cv2.imshow("Image", image)
         cv2.waitKey(1)
@@ -160,3 +163,33 @@ class Image(object):
     @staticmethod
     def clean_up() -> None:
         return cv2.destroyAllWindows()
+
+    @staticmethod
+    def create_video(renders: dict[float, "Image"], video_name: str = "video.avi"):
+        """
+        Creates a video from a collection of `Image` objects and writes it
+        to the disk
+        """
+        if not renders or len(renders) == 0:
+            print("No images provided.")
+            return
+
+        timestamps = list(renders.keys())
+        avg_fps = 1 / np.mean(np.diff(timestamps))
+
+        images = list(renders.values())
+        width = images[0].width
+        height = images[0].height
+
+        video_writer = cv2.VideoWriter(
+            video_name, cv2.VideoWriter_fourcc(*"H264"), avg_fps, (width, height)
+        )
+
+        for image in images:
+            video_writer.write(
+                cv2.cvtColor(image.to_cv2(), cv2.COLOR_RGBA2BGR),
+            )
+
+        video_writer.release()
+
+        print(f'Video saved as "{video_name}"')

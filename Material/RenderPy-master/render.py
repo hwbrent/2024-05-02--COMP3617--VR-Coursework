@@ -1,4 +1,5 @@
 import math
+from time import time as timer
 
 from image import Image, Color
 from model import Model
@@ -14,7 +15,7 @@ NEAR_CLIP = 0.1
 # comment on their effect on drift compensation in your report. Implement
 # any other processing of the accelerometer values that you consider important
 # / necessary and discuss this in the report.
-ALPHA = 0.5
+ALPHA = 0.01
 
 WIDTH = 512
 HEIGHT = 512
@@ -67,7 +68,7 @@ def getVertexNormal(vertIndex, faceNormalsByVertex):
     return normal / len(faceNormalsByVertex[vertIndex])
 
 
-def render(model: Model) -> None:
+def render(model: Model) -> Image:
     image = Image(WIDTH, HEIGHT, Color(255, 255, 255, 255))
 
     # Init z-buffer
@@ -134,7 +135,7 @@ def render(model: Model) -> None:
                 transformedPoints[0], transformedPoints[1], transformedPoints[2]
             ).draw_faster(image, zBuffer)
 
-    image.show()
+    return image
 
 
 def main() -> None:
@@ -142,39 +143,50 @@ def main() -> None:
     model.normalizeGeometry()
 
     dataset = Dataset()
+    rows = dataset.df.values
+    num_rows = len(rows)
+
+    start_time = timer()
+
+    # Key is the timestamp from the IMU, value is the rendered image
+    renders = {}
 
     orientation = Quaternion.identity()
     prev_time = None
 
-    for row in dataset:
-        time = row[1]
+    for i, row in enumerate(rows):
+        time = row[0]
+
+        # Progress stats
+        renders_done = f"{i+1}/{num_rows}"
+        pctg_done = round(((i + 1) / num_rows) * 100, 4)
+        imu_time = time
+        time_elapsed = round(timer() - start_time, 2)
+        print(f"{renders_done} ({pctg_done}%) | {imu_time} | {time_elapsed}")
 
         if prev_time is None:
             prev_time = time
-            render(model)
+
+            image = render(model)
+            image.show()
             continue
 
-        gyroscope = row[2:5]
-        accelerometer = row[5:8]
-        magnetometer = row[8:]
-
         time_diff = time - prev_time
+        prev_time = time
+
+        gyroscope = row[1:4]
+        accelerometer = row[4:7]
+        magnetometer = row[7:]
 
         """ Problem 3 Question 1 """
-        g_x, g_y, g_z = gyroscope
-        g_angles = EulerAngles(
-            g_x * time_diff,
-            g_y * time_diff,
-            g_z * time_diff,
-        )
+        g_angles = EulerAngles(*(gyroscope * time_diff))
         g_orientation = g_angles.to_quaternion()
         orientation *= g_orientation
+        orientation.normalise()
 
         """ Problem 3 Question 2 """
-        a_x, a_y, a_z = accelerometer
-
         # Transform acceleration measurements into the global frame
-        a_local = Quaternion(0, a_x, a_y, a_z)
+        a_local = Quaternion(0, *accelerometer)
         a_global = a_local * orientation * orientation.get_conjugate()
 
         # Calculate the tilt axis
@@ -197,14 +209,15 @@ def main() -> None:
         correction = EulerAngles(0, pitch, 0).to_quaternion()
         fused = Quaternion.slerp(orientation, orientation * correction, ALPHA)
         orientation = fused
-
         orientation.normalise()
+
         model.rotate(matrix=orientation.to_rotation_matrix())
 
-        # Show the model
-        render(model)
+        image = render(model)
+        image.show()
 
-        prev_time = time
+    #     renders[time] = image
+    # Image.create_video(renders)
 
     Image.clean_up()
 
