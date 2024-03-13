@@ -10,7 +10,7 @@ import numpy as np
 
 class Model(object):
     def __init__(self, file):
-        self.vertices: list[Vector] = []
+        self.vertices = np.array([])
         self.faces = []
         self.scale = [0, 0, 0]
         self.rot = [0, 0, 0]
@@ -28,7 +28,7 @@ class Model(object):
             # Vertices
             if segments[0] == "v":
                 vertex = Vector(*[float(i) for i in segments[1:4]])
-                self.vertices.append(vertex)
+                self.vertices = np.append(self.vertices, vertex)
 
             # Faces
             elif segments[0] == "f":
@@ -48,12 +48,7 @@ class Model(object):
             maxCoords[1] = max(abs(vertex.y), maxCoords[1])
             maxCoords[2] = max(abs(vertex.z), maxCoords[2])
 
-        s = 1 / max(maxCoords)
-        # s=1
-        for vertex in self.vertices:
-            vertex.x = vertex.x * s
-            vertex.y = vertex.y * s
-            vertex.z = vertex.z * s
+        self.vertices *= 1 / max(maxCoords)
 
     def translate(self, dx: int, dy: int, dz: int) -> None:
         """

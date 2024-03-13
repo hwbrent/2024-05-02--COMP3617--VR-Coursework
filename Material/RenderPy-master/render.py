@@ -142,38 +142,32 @@ def main() -> None:
     model.normalizeGeometry()
 
     dataset = Dataset()
+    rows = dataset.df.values
 
     orientation = Quaternion.identity()
     prev_time = None
 
-    for entry in dataset.df.itertuples():
-        time = entry[1]
+    for row in rows:
+        time = row[0]
 
         if prev_time is None:
             prev_time = time
             render(model)
             continue
 
-        gyroscope = entry[2:5]
-        accelerometer = entry[5:8]
+        gyroscope = row[1:4]
+        accelerometer = row[4:7]
 
         time_diff = time - prev_time
 
         """ Problem 3 Question 1 """
-        g_x, g_y, g_z = gyroscope
-        g_angles = EulerAngles(
-            g_x * time_diff,
-            g_y * time_diff,
-            g_z * time_diff,
-        )
+        g_angles = EulerAngles(*(gyroscope * time_diff))
         g_orientation = g_angles.to_quaternion()
         orientation *= g_orientation
 
         """ Problem 3 Question 2 """
-        a_x, a_y, a_z = accelerometer
-
         # Transform acceleration measurements into the global frame
-        a_local = Quaternion(0, a_x, a_y, a_z)
+        a_local = Quaternion(0, *accelerometer)
         a_global = a_local * orientation * orientation.get_conjugate()
 
         # Calculate the tilt axis
