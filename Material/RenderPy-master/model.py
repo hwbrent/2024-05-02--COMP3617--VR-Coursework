@@ -7,9 +7,23 @@ from vector import Vector
 
 import numpy as np
 
+import os
+
+this_dir = os.path.dirname(__file__)
+data_dir = os.path.join(this_dir, "data")
+
+# fmt: off
+HEADSET_100 = "headset_100%.obj"
+HEADSET_50  = "headset_50%.obj"
+HEADSET_25  = "headset_25%.obj"
+BOOKS       = "books.obj"
+COLA        = "cola.obj"
+COW         = "cow.obj"
+# fmt: on
+
 
 class Model(object):
-    def __init__(self, file):
+    def __init__(self, file_name: str) -> None:
         self.vertices = np.array([])
         self.faces = []
         self.scale = [0, 0, 0]
@@ -17,7 +31,8 @@ class Model(object):
         self.trans = [0, 0, 0]
 
         # Read in the file
-        f = open(file, "r")
+        file_path = os.path.join(data_dir, file_name)
+        f = open(file_path, "r")
         for line in f:
             if line.startswith("#"):
                 continue

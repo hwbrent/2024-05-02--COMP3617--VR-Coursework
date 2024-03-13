@@ -2,7 +2,7 @@ import math
 from time import time as timer
 
 from image import Image, Color
-from model import Model
+from model import Model, HEADSET_100, HEADSET_50, HEADSET_25
 from shape import Point, Line, Triangle
 from vector import Vector, Quaternion, EulerAngles
 from dataset import Dataset
@@ -139,7 +139,7 @@ def render(model: Model) -> Image:
 
 
 def main() -> None:
-    model = Model("data/headset_100%.obj")
+    model = Model(HEADSET_100)
     model.normalizeGeometry()
 
     dataset = Dataset()
