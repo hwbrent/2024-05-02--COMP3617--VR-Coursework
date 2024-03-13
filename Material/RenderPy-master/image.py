@@ -139,6 +139,15 @@ class Image(object):
         png.write(self.packData())
         png.close()
 
+    def to_cv2(self) -> cv2.typing.MatLike:
+        """
+        Returns this image in a format that `opencv`'s APIs recognise.
+        """
+        return cv2.imdecode(
+            np.frombuffer(self.packData(), np.uint8),
+            cv2.IMREAD_COLOR,
+        )
+
     def show(self) -> None:
         """
         --- Problem 1 Question 1 ---
@@ -146,13 +155,7 @@ class Image(object):
         Enable real time output of the frame buffer on the screen
         """
 
-        binary_data = self.packData()
-
-        image = cv2.imdecode(
-            np.frombuffer(binary_data, np.uint8),
-            cv2.IMREAD_COLOR,
-        )
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # convert to RGB
+        image = cv2.cvtColor(self.to_cv2(), cv2.COLOR_BGR2RGB)  # convert to RGB
 
         cv2.imshow("Image", image)
         cv2.waitKey(1)
