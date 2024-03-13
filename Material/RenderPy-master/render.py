@@ -166,13 +166,16 @@ def main() -> None:
 
         if prev_time is None:
             prev_time = time
-            render(model)
+
+            image = render(model)
+            image.show()
             continue
+
+        time_diff = time - prev_time
+        prev_time = time
 
         gyroscope = row[1:4]
         accelerometer = row[4:7]
-
-        time_diff = time - prev_time
 
         """ Problem 3 Question 1 """
         g_angles = EulerAngles(*(gyroscope * time_diff))
@@ -209,12 +212,11 @@ def main() -> None:
         model.rotate(matrix=orientation.to_rotation_matrix())
 
         image = render(model)
-        # image.show()
+        image.show()
+
         renders[time] = image
-
-        prev_time = time
-
     Image.create_video(renders)
+
     Image.clean_up()
 
 
