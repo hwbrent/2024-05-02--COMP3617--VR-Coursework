@@ -139,7 +139,7 @@ def render(model: Model) -> Image:
 
 
 def main() -> None:
-    model = Model("data/headset.obj")
+    model = Model("data/headset_100%.obj")
     model.normalizeGeometry()
 
     dataset = Dataset()
