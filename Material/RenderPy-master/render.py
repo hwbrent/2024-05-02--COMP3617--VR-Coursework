@@ -68,7 +68,7 @@ def getVertexNormal(vertIndex, faceNormalsByVertex):
     return normal / len(faceNormalsByVertex[vertIndex])
 
 
-def render(model: Model) -> None:
+def render(model: Model) -> Image:
     image = Image(WIDTH, HEIGHT, Color(255, 255, 255, 255))
 
     # Init z-buffer
@@ -135,7 +135,7 @@ def render(model: Model) -> None:
                 transformedPoints[0], transformedPoints[1], transformedPoints[2]
             ).draw_faster(image, zBuffer)
 
-    image.show()
+    return image
 
 
 def main() -> None:
@@ -147,6 +147,9 @@ def main() -> None:
     num_rows = len(rows)
 
     start_time = timer()
+
+    # Key is the timestamp from the IMU, value is the rendered image
+    renders = {}
 
     orientation = Quaternion.identity()
     prev_time = None
@@ -205,11 +208,13 @@ def main() -> None:
         orientation.normalise()
         model.rotate(matrix=orientation.to_rotation_matrix())
 
-        # Show the model
-        render(model)
+        image = render(model)
+        # image.show()
+        renders[time] = image
 
         prev_time = time
 
+    Image.create_video(renders)
     Image.clean_up()
 
 

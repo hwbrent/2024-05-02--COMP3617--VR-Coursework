@@ -163,3 +163,33 @@ class Image(object):
     @staticmethod
     def clean_up() -> None:
         return cv2.destroyAllWindows()
+
+    @staticmethod
+    def create_video(renders: dict[float, "Image"], video_name: str = "video.avi"):
+        """
+        Creates a video from a collection of `Image` objects and writes it
+        to the disk
+        """
+        if not renders or len(renders) == 0:
+            print("No images provided.")
+            return
+
+        timestamps = list(renders.keys())
+        avg_fps = 1 / np.mean(np.diff(timestamps))
+
+        images = list(renders.values())
+        width = images[0].width
+        height = images[0].height
+
+        video_writer = cv2.VideoWriter(
+            video_name, cv2.VideoWriter_fourcc(*"H264"), avg_fps, (width, height)
+        )
+
+        for image in images:
+            video_writer.write(
+                cv2.cvtColor(image.to_cv2(), cv2.COLOR_RGBA2BGR),
+            )
+
+        video_writer.release()
+
+        print(f'Video saved as "{video_name}"')
