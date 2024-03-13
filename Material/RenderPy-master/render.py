@@ -214,8 +214,8 @@ def main() -> None:
         image = render(model)
         image.show()
 
-        renders[time] = image
-    Image.create_video(renders)
+    #     renders[time] = image
+    # Image.create_video(renders)
 
     Image.clean_up()
 
