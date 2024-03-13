@@ -1,4 +1,5 @@
 import math
+from time import time as timer
 
 from image import Image, Color
 from model import Model
@@ -143,12 +144,22 @@ def main() -> None:
 
     dataset = Dataset()
     rows = dataset.df.values
+    num_rows = len(rows)
+
+    start_time = timer()
 
     orientation = Quaternion.identity()
     prev_time = None
 
-    for row in rows:
+    for i, row in enumerate(rows):
         time = row[0]
+
+        # Progress stats
+        renders_done = f"{i+1}/{num_rows}"
+        pctg_done = round(((i + 1) / num_rows) * 100, 4)
+        imu_time = time
+        time_elapsed = round(timer() - start_time, 2)
+        print(f"{renders_done} ({pctg_done}%) | {imu_time} | {time_elapsed}")
 
         if prev_time is None:
             prev_time = time
