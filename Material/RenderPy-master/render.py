@@ -142,20 +142,21 @@ def main() -> None:
     model.normalizeGeometry()
 
     dataset = Dataset()
+    rows = dataset.df.values
 
     orientation = Quaternion.identity()
     prev_time = None
 
-    for entry in dataset.df.itertuples():
-        time = entry[1]
+    for row in rows:
+        time = row[0]
 
         if prev_time is None:
             prev_time = time
             render(model)
             continue
 
-        gyroscope = entry[2:5]
-        accelerometer = entry[5:8]
+        gyroscope = row[1:4]
+        accelerometer = row[4:7]
 
         time_diff = time - prev_time
 
