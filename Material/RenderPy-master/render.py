@@ -181,6 +181,7 @@ def main() -> None:
         g_angles = EulerAngles(*(gyroscope * time_diff))
         g_orientation = g_angles.to_quaternion()
         orientation *= g_orientation
+        orientation.normalise()
 
         """ Problem 3 Question 2 """
         # Transform acceleration measurements into the global frame
@@ -207,8 +208,8 @@ def main() -> None:
         correction = EulerAngles(0, pitch, 0).to_quaternion()
         fused = Quaternion.slerp(orientation, orientation * correction, ALPHA)
         orientation = fused
-
         orientation.normalise()
+
         model.rotate(matrix=orientation.to_rotation_matrix())
 
         image = render(model)
