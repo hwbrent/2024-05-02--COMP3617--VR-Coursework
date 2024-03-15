@@ -1,4 +1,3 @@
-import math
 from time import time as timer
 
 from image import Image, Color
@@ -8,17 +7,10 @@ from vector import Vector, Quaternion, EulerAngles
 from dataset import Dataset
 from video import Video
 from benchmarking import show_progress
-from tracking import get_dead_reckoning_filter
+from tracking import get_dead_reckoning_filter, apply_tilt_correction
 
 FOCAL_LENGTH = 1
 NEAR_CLIP = 0.1
-
-# TODO: Problem 3 Question 3
-# Try a few different alpha values (e.g., 0.01, 0.1, ...), investigate and
-# comment on their effect on drift compensation in your report. Implement
-# any other processing of the accelerometer values that you consider important
-# / necessary and discuss this in the report.
-ALPHA = 0.01
 
 
 # Set the camera back slightly from the origin so that the whole headset is
@@ -132,31 +124,7 @@ def main() -> None:
         orientation *= get_dead_reckoning_filter(gyroscope, time_diff)
         orientation.normalise()
 
-        """ Problem 3 Question 2 """
-        # Transform acceleration measurements into the global frame
-        a_local = Quaternion(0, *accelerometer)
-        a_global = a_local * orientation * orientation.get_conjugate()
-
-        # Calculate the tilt axis
-        tilt_axis_local = Quaternion(0, *gyroscope)
-        tilt_axis_global = tilt_axis_local * orientation * orientation.get_conjugate()
-
-        # Find the angle φ between the up vector and the vector obtained
-        # from the accelerometer
-        up = Vector(0, 0, 1)
-        acc_vector_global = Vector(a_global.x, a_global.y, a_global.z)
-        phi = math.acos(
-            up.normalize().dot(
-                acc_vector_global.normalize(),
-            ),
-        )
-
-        # Use the complementary filter to fuse the gyroscope estimation
-        # and the accelerometer estimation
-        pitch = phi if (acc_vector_global.z < 0) else -phi
-        correction = EulerAngles(0, pitch, 0).to_quaternion()
-        fused = Quaternion.slerp(orientation, orientation * correction, ALPHA)
-        orientation = fused
+        orientation = apply_tilt_correction(accelerometer, orientation, gyroscope)
         orientation.normalise()
 
         model.rotate(matrix=orientation.to_rotation_matrix())
