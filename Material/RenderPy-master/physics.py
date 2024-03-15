@@ -3,6 +3,13 @@ import numpy as np
 from model import Model
 from vector import Vector
 
+# All are arbitrary; obtained in assignment pdf
+# fmt: off
+DRAG_COEFFICIENT = 0.5
+AIR_DENSITY      = 1.3  # kilograms per cubic metre
+REFERENCE_AREA   = 0.2  # square metres
+# fmt: on
+
 
 def get_drag(velocity: float) -> float:
     # Formula is:
