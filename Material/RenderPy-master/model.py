@@ -45,6 +45,24 @@ class Model(object):
                         corner3 = int(segments[i + 1].split("/")[0]) - 1
                         self.faces.append([corner1, corner2, corner3])
 
+    def get_face_normals(self) -> dict[int, list[Vector]]:
+        """
+        (Copied and pasted from the original `render.py`)
+        """
+
+        faceNormals = {}
+        for face in self.faces:
+            p0, p1, p2 = [self.vertices[i] for i in face]
+            faceNormal = (p2 - p0).cross(p1 - p0).normalize()
+
+            for i in face:
+                if not i in faceNormals:
+                    faceNormals[i] = []
+
+                faceNormals[i].append(faceNormal)
+
+        return faceNormals
+
     def normalizeGeometry(self):
         maxCoords = [0, 0, 0]
 

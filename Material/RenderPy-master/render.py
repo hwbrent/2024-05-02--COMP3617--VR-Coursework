@@ -75,16 +75,7 @@ def render(model: Model) -> Image:
     zBuffer = [-float("inf")] * WIDTH * HEIGHT
 
     # Calculate face normals
-    faceNormals = {}
-    for face in model.faces:
-        p0, p1, p2 = [model.vertices[i] for i in face]
-        faceNormal = (p2 - p0).cross(p1 - p0).normalize()
-
-        for i in face:
-            if not i in faceNormals:
-                faceNormals[i] = []
-
-            faceNormals[i].append(faceNormal)
+    faceNormals = model.get_face_normals()
 
     # Calculate vertex normals
     vertexNormals = []
