@@ -108,6 +108,8 @@ class Model(object):
     @staticmethod
     def collided(model1: "Model", model2: "Model") -> bool:
         """
+        --- Problem 5 Question 2 ---
+
         Given two `Model` objects, this function returns a `bool` indicating
         whether they are colliding.
         """
