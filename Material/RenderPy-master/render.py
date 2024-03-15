@@ -78,7 +78,7 @@ def render(model: Model) -> Image:
         cull = False
 
         # Transform vertices and calculate lighting intensity per vertex
-        transformedPoints = []
+        transformed = []
         for p, n in zip([p0, p1, p2], [n0, n1, n2]):
             intensity = n * lightDir
 
@@ -92,22 +92,17 @@ def render(model: Model) -> Image:
             if coords is None:
                 continue
 
-            screenX, screenY = coords
-
-            transformedPoints.append(
-                Point(
-                    screenX,
-                    screenY,
-                    p.z,
-                    Color(intensity * 255, intensity * 255, intensity * 255, 255),
-                )
-            )
+            color = Color(intensity * 255, intensity * 255, intensity * 255, 255)
+            point = Point(*coords, p.z, color)
+            transformed.append(point)
 
         # Don't draw triangles whose vertices have been cut off
-        if not cull and len(transformedPoints) == 3:
-            Triangle(
-                transformedPoints[0], transformedPoints[1], transformedPoints[2]
-            ).draw_faster(image, zBuffer)
+        should_draw = (not cull) and len(transformed) == 3
+        if not should_draw:
+            continue
+
+        triangle = Triangle(*transformed)
+        triangle.draw_faster(image, zBuffer)
 
     return image
 
