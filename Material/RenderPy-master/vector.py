@@ -217,6 +217,10 @@ class Vector(object):
     def __add__(self, other: "Vector") -> "Vector":
         return Vector(*(self.components + other.components))
 
+    def __iadd__(self, other: "Vector") -> "Vector":
+        self.components = (self + other).components
+        return self
+
     def __sub__(self, other: "Vector") -> "Vector":
         return Vector(*(self.components - other.components))
 
