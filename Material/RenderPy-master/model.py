@@ -9,33 +9,41 @@ import numpy as np
 
 
 class Model(object):
-    def __init__(self, file):
+    def __init__(self, file: str):
         self.vertices = np.array([])
         self.faces = []
+        self.file = file
 
-        # Read in the file
-        f = open(file, "r")
-        for line in f:
-            if line.startswith("#"):
-                continue
-            segments = line.split()
-            if not segments:
-                continue
+        self.parse_file()
 
-            # Vertices
-            if segments[0] == "v":
-                vertex = Vector(*[float(i) for i in segments[1:4]])
-                self.vertices = np.append(self.vertices, vertex)
+    def parse_file(self) -> None:
+        """
+        This function populates `self.vertices` and `self.faces` according
+        to the information parsed in the file at location `self.file`.
+        """
 
-            # Faces
-            elif segments[0] == "f":
-                # Support models that have faces with more than 3 points
-                # Parse the face as a triangle fan
-                for i in range(2, len(segments) - 1):
-                    corner1 = int(segments[1].split("/")[0]) - 1
-                    corner2 = int(segments[i].split("/")[0]) - 1
-                    corner3 = int(segments[i + 1].split("/")[0]) - 1
-                    self.faces.append([corner1, corner2, corner3])
+        with open(self.file, "r") as f:
+            for line in f:
+                if line.startswith("#"):
+                    continue
+                segments = line.split()
+                if not segments:
+                    continue
+
+                # Vertices
+                if segments[0] == "v":
+                    vertex = Vector(*[float(i) for i in segments[1:4]])
+                    self.vertices = np.append(self.vertices, vertex)
+
+                # Faces
+                elif segments[0] == "f":
+                    # Support models that have faces with more than 3 points
+                    # Parse the face as a triangle fan
+                    for i in range(2, len(segments) - 1):
+                        corner1 = int(segments[1].split("/")[0]) - 1
+                        corner2 = int(segments[i].split("/")[0]) - 1
+                        corner3 = int(segments[i + 1].split("/")[0]) - 1
+                        self.faces.append([corner1, corner2, corner3])
 
     def normalizeGeometry(self):
         maxCoords = [0, 0, 0]
