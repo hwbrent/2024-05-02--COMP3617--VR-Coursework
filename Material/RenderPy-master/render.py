@@ -100,8 +100,6 @@ def main() -> None:
     for row in dataset:
         index, time, gyroscope, accelerometer, magnetometer = row
 
-        show_progress(index, dataset.length, time, start_time)
-
         image = Image.white()
         zBuffer = image.get_zBuffer()
 
@@ -121,6 +119,8 @@ def main() -> None:
         video.add_frame(time, image)
 
         prev_time = time
+
+        show_progress(index, dataset.length, time, start_time)
 
     video.save()
 
