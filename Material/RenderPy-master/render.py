@@ -88,8 +88,6 @@ def main() -> None:
     model.normalizeGeometry()
 
     dataset = Dataset()
-    rows = dataset.df.values
-    num_rows = len(rows)
 
     video = Video()
 
@@ -99,10 +97,10 @@ def main() -> None:
     orientation = Quaternion.identity()
     prev_time = None
 
-    for i, row in enumerate(rows):
-        time = row[0]
+    for row in dataset:
+        index, time, gyroscope, accelerometer, magnetometer = row
 
-        show_progress(i, num_rows, time, start_time)
+        show_progress(index, dataset.length, time, start_time)
 
         image = Image.white()
         zBuffer = image.get_zBuffer()
@@ -117,9 +115,6 @@ def main() -> None:
 
         time_diff = time - prev_time
         prev_time = time
-
-        gyroscope = row[1:4]
-        accelerometer = row[4:7]
 
         orientation *= get_dead_reckoning_filter(gyroscope, time_diff)
         orientation.normalise()

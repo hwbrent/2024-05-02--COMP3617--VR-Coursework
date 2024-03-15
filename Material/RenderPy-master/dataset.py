@@ -17,6 +17,8 @@ class Dataset:
         self.df = self.import_from_csv()
         self.convert_rotational_rate()
 
+        self.length = len(self.df.index)
+
     def get_path(self) -> str:
         """
         This function returns the absolute filepath of the CSV file containing
@@ -60,3 +62,25 @@ class Dataset:
 
     def __getitem__(self, key):
         return self.df[key]
+
+    def __iter__(self):
+        self._i = 0
+        return self
+
+    def __next__(self):
+        if self._i < self.length:
+
+            row = self.df.values[self._i]
+
+            time = row[0]
+            gyroscope = row[1:4]
+            accelerometer = row[4:7]
+            magnetometer = row[7:]
+
+            row = (self._i, time, gyroscope, accelerometer, magnetometer)
+            self._i += 1
+
+            return row
+        else:
+            del self._i
+            raise StopIteration
