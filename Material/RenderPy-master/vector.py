@@ -193,6 +193,13 @@ class Vector(object):
 
         return vector
 
+    def to_euclidean(self) -> np.ndarray:
+        """
+        Returns the euclidean version of this homogeneous `Vector` as a
+        `numpy.ndarray`.
+        """
+        return self.xyz / self.w
+
     # Overrides
     def __mul__(self, other):
         """If multiplied by another vector, return the dot product.
