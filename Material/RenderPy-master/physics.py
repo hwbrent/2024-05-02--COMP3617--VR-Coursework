@@ -24,6 +24,20 @@ def get_drag(velocity: float) -> float:
     return DRAG_COEFFICIENT * 0.5 * AIR_DENSITY * (velocity**2) * REFERENCE_AREA
 
 
+def get_acceleration(model: Model) -> float:
+    # Force (F) = mass (m) times acceleration (a)
+    # (a = F / m)
+    # The net external force (F) = weight (W) - drag forces (D)
+    # a = (W - D) / m
+    # W = m * g, where m is mass, and g is the gravitational constant
+
+    # - As the model accelerates, its velocity and drag will increase
+    # - The drag will eventually balance out the weight
+    # - Then, there will be no net external force
+    # - So the acceleration will become 0 (i.e. terminal velocity)
+    pass
+
+
 def get_bounding_sphere(model: Model) -> tuple[Vector, float]:
     """
     --- Problem 5 Question 2 ---
