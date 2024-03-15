@@ -20,7 +20,8 @@ def get_drag(velocity: float) -> float:
     #   r  = air density
     #   V  = velocity
     #   A  = reference area on which the drag coefficient is based
-    pass
+    # (Obtained from provided "Falling Object with Air Resistance.pdf")
+    return DRAG_COEFFICIENT * 0.5 * AIR_DENSITY * (velocity**2) * REFERENCE_AREA
 
 
 def get_bounding_sphere(model: Model) -> tuple[Vector, float]:
