@@ -26,15 +26,6 @@ camera = Vector(0, 0, -2)
 lightDir = Vector(0, 0, -1)
 
 
-def getOrthographicProjection(x, y, z, image: Image):
-    # Convert vertex from world space to screen space
-    # by dropping the z-coordinate (Orthographic projection)
-    screenX = int((x + 1.0) * image.width / 2.0)
-    screenY = int((y + 1.0) * image.height / 2.0)
-
-    return screenX, screenY
-
-
 def getPerspectiveProjection(vector: Vector, image: Image) -> None | tuple[int, int]:
     """
     --- Problem 1 Question 2 ---
