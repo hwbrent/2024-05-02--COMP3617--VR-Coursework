@@ -7,6 +7,8 @@ from vector import Vector
 
 import numpy as np
 
+from physics import get_bounding_sphere
+
 
 class Model(object):
     def __init__(self, file):
@@ -40,7 +42,7 @@ class Model(object):
                     corner3 = int(segments[i + 1].split("/")[0]) - 1
                     self.faces.append([corner1, corner2, corner3])
 
-        self.sphere_centre, self.sphere_radius = self.get_bounding_sphere()
+        self.sphere_centre, self.sphere_radius = get_bounding_sphere(self)
 
     def normalizeGeometry(self):
         maxCoords = [0, 0, 0]
@@ -88,31 +90,3 @@ class Model(object):
         """
 
         self.vertices = [v.scale(sx, sy, sz) for v in self.vertices]
-
-    def get_bounding_sphere(self) -> tuple[Vector, float]:
-        """
-        --- Problem 5 Question 2 ---
-
-        Gets the centre and radius of this `Model`'s bounding sphere
-        """
-        # The average of all the xyz values of the vertices
-        centre = np.mean([v.xyz for v in self.vertices], axis=0)
-        v_centre = Vector(*centre)
-
-        # The radius is the distance of the furthest-away vertex from
-        # v_centre
-        radius = max((v_centre - v).norm() for v in self.vertices)
-
-        return v_centre, radius
-
-    @staticmethod
-    def collided(model1: "Model", model2: "Model") -> bool:
-        """
-        --- Problem 5 Question 2 ---
-
-        Given two `Model` objects, this function returns a `bool` indicating
-        whether they are colliding.
-        """
-        distance = (model1.sphere_centre - model2.sphere_centre).norm()
-        radius_sum = model1.sphere_radius + model2.sphere_radius
-        return distance <= radius_sum
