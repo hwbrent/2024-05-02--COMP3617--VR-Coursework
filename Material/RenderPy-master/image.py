@@ -53,6 +53,10 @@ class Color(object):
         return Color(outR, outG, outB, outA)
 
 
+WIDTH = 512
+HEIGHT = 512
+
+
 class Image(object):
     """An image class capable of generating and saving a PNG.
     Attributes:
@@ -61,7 +65,7 @@ class Image(object):
             buffer: Representation of the image storing Color values for each pixel
     """
 
-    def __init__(self, width, height, color=Color(0, 0, 0, 255)):
+    def __init__(self, width=WIDTH, height=HEIGHT, color=Color(0, 0, 0, 255)):
         """Create the buffer, fill it with black pixels."""
         self.width = width
         self.height = height

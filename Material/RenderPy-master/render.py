@@ -17,9 +17,6 @@ NEAR_CLIP = 0.1
 # / necessary and discuss this in the report.
 ALPHA = 0.01
 
-WIDTH = 512
-HEIGHT = 512
-
 
 # Set the camera back slightly from the origin so that the whole headset is
 # visible.
@@ -29,16 +26,16 @@ camera = Vector(0, 0, -2)
 lightDir = Vector(0, 0, -1)
 
 
-def getOrthographicProjection(x, y, z):
+def getOrthographicProjection(x, y, z, image: Image):
     # Convert vertex from world space to screen space
     # by dropping the z-coordinate (Orthographic projection)
-    screenX = int((x + 1.0) * WIDTH / 2.0)
-    screenY = int((y + 1.0) * HEIGHT / 2.0)
+    screenX = int((x + 1.0) * image.width / 2.0)
+    screenY = int((y + 1.0) * image.height / 2.0)
 
     return screenX, screenY
 
 
-def getPerspectiveProjection(vector: Vector) -> None | tuple[int, int]:
+def getPerspectiveProjection(vector: Vector, image: Image) -> None | tuple[int, int]:
     """
     --- Problem 1 Question 2 ---
 
@@ -56,17 +53,17 @@ def getPerspectiveProjection(vector: Vector) -> None | tuple[int, int]:
         ((FOCAL_LENGTH * axis) / z + 1.0) * dimension / 2.0
     )
 
-    x = project(x, WIDTH)
-    y = project(y, HEIGHT)
+    x = project(x, image.width)
+    y = project(y, image.height)
 
     return x, y
 
 
 def render(model: Model) -> Image:
-    image = Image(WIDTH, HEIGHT, Color(255, 255, 255, 255))
+    image = Image(color=Color(255, 255, 255, 255))
 
     # Init z-buffer
-    zBuffer = [-float("inf")] * WIDTH * HEIGHT
+    zBuffer = [-float("inf")] * image.width * image.height
 
     # Calculate face normals
     faceNormals = model.get_face_normals()
@@ -90,8 +87,8 @@ def render(model: Model) -> Image:
             if intensity < 0:
                 cull = True  # Back face culling is disabled in this version
 
-            # coords = getOrthographicProjection(*p.xyz)
-            coords = getPerspectiveProjection(p)
+            # coords = getOrthographicProjection(*p.xyz, image)
+            coords = getPerspectiveProjection(p, image)
             if coords is None:
                 continue
 
