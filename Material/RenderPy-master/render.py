@@ -6,6 +6,7 @@ from model import Model
 from shape import Point, Line, Triangle
 from vector import Vector, Quaternion, EulerAngles
 from dataset import Dataset
+from video import Video
 
 FOCAL_LENGTH = 1
 NEAR_CLIP = 0.1
@@ -96,11 +97,10 @@ def main() -> None:
     rows = dataset.df.values
     num_rows = len(rows)
 
+    video = Video()
+
     ### Prep for the programme loop ###
     start_time = timer()
-
-    # Key is the timestamp from the IMU, value is the rendered image
-    renders = {}
 
     orientation = Quaternion.identity()
     prev_time = None
@@ -123,6 +123,7 @@ def main() -> None:
 
             render(model, image, zBuffer)
             image.show()
+            video.add_frame(time, image)
             continue
 
         time_diff = time - prev_time
@@ -169,9 +170,9 @@ def main() -> None:
         render(model, image, zBuffer)
         image.show()
 
-    #     renders[time] = image
-    # Image.create_video(renders)
+        video.add_frame(time, image)
 
+    video.save()
     Image.clean_up()
 
 
