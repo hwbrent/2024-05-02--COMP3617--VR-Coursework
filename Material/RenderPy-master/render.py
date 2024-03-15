@@ -7,6 +7,7 @@ from shape import Point, Line, Triangle
 from vector import Vector, Quaternion, EulerAngles
 from dataset import Dataset
 from video import Video
+from benchmarking import show_progress
 
 FOCAL_LENGTH = 1
 NEAR_CLIP = 0.1
@@ -108,12 +109,7 @@ def main() -> None:
     for i, row in enumerate(rows):
         time = row[0]
 
-        # Progress stats
-        renders_done = f"{i+1}/{num_rows}"
-        pctg_done = round(((i + 1) / num_rows) * 100, 4)
-        imu_time = time
-        time_elapsed = round(timer() - start_time, 2)
-        print(f"{renders_done} ({pctg_done}%) | {imu_time} | {time_elapsed}")
+        show_progress(i, num_rows, time, start_time)
 
         image = Image.white()
         zBuffer = image.get_zBuffer()
