@@ -71,17 +71,17 @@ def render(model: Model) -> Image:
 
     # Render the image iterating through faces
     for face in model.faces:
-        p0, p1, p2 = [model.vertices[i] for i in face]
-        n0, n1, n2 = [vertexNormals[i] for i in face]
+        vertices = [model.vertices[i] for i in face]
+        normals = [vertexNormals[i] for i in face]
 
         # Set to true if face should be culled
         cull = False
 
         # Transform vertices and calculate lighting intensity per vertex
         transformed = []
-        for p, n in zip([p0, p1, p2], [n0, n1, n2]):
-            intensity = n * lightDir
-            screen_xy = getPerspectiveProjection(p, image)
+        for vertex, normal in zip(vertices, normals):
+            intensity = normal * lightDir
+            screen_xy = getPerspectiveProjection(vertex, image)
 
             # Intensity < 0 means light is shining through the back of the face
             # In this case, don't draw the face at all ("back-face culling")
@@ -89,8 +89,9 @@ def render(model: Model) -> Image:
                 cull = True
                 break
 
-            color = Color(intensity * 255, intensity * 255, intensity * 255, 255)
-            point = Point(*screen_xy, p.z, color)
+            rgb = intensity * 255  # same value for each. Makes colours grayscale
+            color = Color(rgb, rgb, rgb, 255)
+            point = Point(*screen_xy, vertex.z, color)
             transformed.append(point)
 
         if cull:
