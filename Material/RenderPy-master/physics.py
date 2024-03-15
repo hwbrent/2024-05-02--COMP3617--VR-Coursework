@@ -14,30 +14,26 @@ REFERENCE_AREA   = 0.2  # square metres
 
 
 def get_drag(velocity: float) -> float:
-    # Formula is:
-    #   D = Cd * (0.5 * r) * V**2 * A
-    # Where:
-    #   D  = drag
-    #   Cd = drag coefficient
-    #   r  = air density
-    #   V  = velocity
-    #   A  = reference area on which the drag coefficient is based
-    # (Obtained from provided "Falling Object with Air Resistance.pdf")
+    """
+    Given the value of a `Model`'s `velocity` attribute, this function
+    calculates the drag force acting on the `Model`.
+
+    See
+    https://www.grc.nasa.gov/www/k-12/VirtualAero/BottleRocket/airplane/falling.html
+    for the formula
+    """
     return DRAG_COEFFICIENT * 0.5 * AIR_DENSITY * (velocity**2) * REFERENCE_AREA
 
 
 def get_acceleration(model: Model) -> float:
-    # Force (F) = mass (m) times acceleration (a)
-    # (a = F / m)
-    # The net external force (F) = weight (W) - drag forces (D)
-    # a = (W - D) / m
-    # W = m * g, where m is mass, and g is the gravitational constant
+    """
+    This function uses the provided `Model`'s `MASS` and `velocity` properties
+    to calculate and return its acceleration
 
-    # - As the model accelerates, its velocity and drag will increase
-    # - The drag will eventually balance out the weight
-    # - Then, there will be no net external force
-    # - So the acceleration will become 0 (i.e. terminal velocity)
-
+    See
+    https://www.grc.nasa.gov/www/k-12/VirtualAero/BottleRocket/airplane/falling.html
+    for the formula
+    """
     m = model.MASS
 
     D = get_drag(model.velocity)
