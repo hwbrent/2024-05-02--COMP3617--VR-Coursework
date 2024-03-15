@@ -2,8 +2,8 @@ from time import time as timer
 
 from image import Image, Color
 from model import Model
-from shape import Point, Line, Triangle
-from vector import Vector, Quaternion, EulerAngles
+from shape import Point, Triangle
+from vector import Vector, Quaternion
 from dataset import Dataset
 from video import Video
 from benchmarking import show_progress
