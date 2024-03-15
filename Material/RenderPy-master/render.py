@@ -50,12 +50,7 @@ def getPerspectiveProjection(vector: Vector, image: Image) -> None | tuple[int, 
     return x, y
 
 
-def render(model: Model) -> Image:
-    image = Image(color=Color(255, 255, 255, 255))
-
-    # Init z-buffer
-    zBuffer = image.get_zBuffer()
-
+def render(model: Model, image: Image, zBuffer: list[float]) -> None:
     # Calculate face normals
     faceNormals = model.get_face_normals()
     vertexNormals = model.get_vertex_normals(faceNormals)
@@ -91,17 +86,19 @@ def render(model: Model) -> Image:
         triangle = Triangle(*transformed)
         triangle.draw_faster(image, zBuffer)
 
-    return image
-
 
 def main() -> None:
+    ### Initialise "globals" ###
     model = Model("data/headset.obj")
     model.normalizeGeometry()
+
+    image = Image(color=Color(255, 255, 255, 255))
 
     dataset = Dataset()
     rows = dataset.df.values
     num_rows = len(rows)
 
+    ### Prep for the programme loop ###
     start_time = timer()
 
     # Key is the timestamp from the IMU, value is the rendered image
@@ -120,10 +117,12 @@ def main() -> None:
         time_elapsed = round(timer() - start_time, 2)
         print(f"{renders_done} ({pctg_done}%) | {imu_time} | {time_elapsed}")
 
+        zBuffer = image.get_zBuffer()
+
         if prev_time is None:
             prev_time = time
 
-            image = render(model)
+            render(model, image, zBuffer)
             image.show()
             continue
 
@@ -168,7 +167,7 @@ def main() -> None:
 
         model.rotate(matrix=orientation.to_rotation_matrix())
 
-        image = render(model)
+        render(model, image, zBuffer)
         image.show()
 
     #     renders[time] = image
