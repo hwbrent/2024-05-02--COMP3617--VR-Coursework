@@ -14,9 +14,6 @@ class Model(object):
     def __init__(self, file):
         self.vertices = np.array([])
         self.faces = []
-        self.scale = [0, 0, 0]
-        self.rot = [0, 0, 0]
-        self.trans = [0, 0, 0]
 
         # Read in the file
         f = open(file, "r")
