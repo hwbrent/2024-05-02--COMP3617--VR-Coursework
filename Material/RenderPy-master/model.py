@@ -104,3 +104,13 @@ class Model(object):
         radius = max((v_centre - v).norm() for v in self.vertices)
 
         return v_centre, radius
+
+    @staticmethod
+    def collided(model1: "Model", model2: "Model") -> bool:
+        """
+        Given two `Model` objects, this function returns a `bool` indicating
+        whether they are colliding.
+        """
+        distance = (model1.sphere_centre - model2.sphere_centre).norm()
+        radius_sum = model1.sphere_radius + model2.sphere_radius
+        return distance <= radius_sum
