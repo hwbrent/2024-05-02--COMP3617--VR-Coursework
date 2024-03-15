@@ -53,6 +53,10 @@ class Color(object):
         return Color(outR, outG, outB, outA)
 
 
+WIDTH = 512
+HEIGHT = 512
+
+
 class Image(object):
     """An image class capable of generating and saving a PNG.
     Attributes:
@@ -61,7 +65,7 @@ class Image(object):
             buffer: Representation of the image storing Color values for each pixel
     """
 
-    def __init__(self, width, height, color=Color(0, 0, 0, 255)):
+    def __init__(self, width=WIDTH, height=HEIGHT, color=Color(0, 0, 0, 255)):
         """Create the buffer, fill it with black pixels."""
         self.width = width
         self.height = height
@@ -71,6 +75,16 @@ class Image(object):
             [color.r(), color.g(), color.b(), color.a()] * width
         )
         self.buffer = row * height
+
+    @classmethod
+    def white(cls):
+        """
+        Returns a white image with the default height and width.
+        """
+        return cls(color=Color(255, 255, 255, 255))
+
+    def get_zBuffer(self) -> list[float]:
+        return [-float("inf")] * self.width * self.height
 
     def setPixel(self, x, y, color):
         """Set the color value for the pixel at (x, y)."""
@@ -163,33 +177,3 @@ class Image(object):
     @staticmethod
     def clean_up() -> None:
         return cv2.destroyAllWindows()
-
-    @staticmethod
-    def create_video(renders: dict[float, "Image"], video_name: str = "video.avi"):
-        """
-        Creates a video from a collection of `Image` objects and writes it
-        to the disk
-        """
-        if not renders or len(renders) == 0:
-            print("No images provided.")
-            return
-
-        timestamps = list(renders.keys())
-        avg_fps = 1 / np.mean(np.diff(timestamps))
-
-        images = list(renders.values())
-        width = images[0].width
-        height = images[0].height
-
-        video_writer = cv2.VideoWriter(
-            video_name, cv2.VideoWriter_fourcc(*"H264"), avg_fps, (width, height)
-        )
-
-        for image in images:
-            video_writer.write(
-                cv2.cvtColor(image.to_cv2(), cv2.COLOR_RGBA2BGR),
-            )
-
-        video_writer.release()
-
-        print(f'Video saved as "{video_name}"')
