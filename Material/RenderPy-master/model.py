@@ -17,8 +17,10 @@ class Model(object):
         self.vertices = np.array([])
         self.faces = []
         self.file = file
+        self.velocity = 0
 
         self.parse_file()
+        self.sphere_centre, self.sphere_radius = get_bounding_sphere(self)
 
     def parse_file(self) -> None:
         """
