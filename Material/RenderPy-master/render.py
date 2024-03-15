@@ -25,6 +25,9 @@ HEIGHT = 512
 # visible.
 camera = Vector(0, 0, -2)
 
+# Define the light direction
+lightDir = Vector(0, 0, -1)
+
 
 def getOrthographicProjection(x, y, z):
     # Convert vertex from world space to screen space
@@ -73,9 +76,6 @@ def render(model: Model) -> Image:
     for face in model.faces:
         p0, p1, p2 = [model.vertices[i] for i in face]
         n0, n1, n2 = [vertexNormals[i] for i in face]
-
-        # Define the light direction
-        lightDir = Vector(0, 0, -1)
 
         # Set to true if face should be culled
         cull = False
