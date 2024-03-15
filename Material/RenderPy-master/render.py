@@ -59,15 +59,6 @@ def getPerspectiveProjection(vector: Vector) -> None | tuple[int, int]:
     return x, y
 
 
-def getVertexNormal(vertIndex, faceNormalsByVertex):
-    # Compute vertex normals by averaging the normals of adjacent faces
-    normal = Vector(0, 0, 0)
-    for adjNormal in faceNormalsByVertex[vertIndex]:
-        normal = normal + adjNormal
-
-    return normal / len(faceNormalsByVertex[vertIndex])
-
-
 def render(model: Model) -> Image:
     image = Image(WIDTH, HEIGHT, Color(255, 255, 255, 255))
 
@@ -76,12 +67,7 @@ def render(model: Model) -> Image:
 
     # Calculate face normals
     faceNormals = model.get_face_normals()
-
-    # Calculate vertex normals
-    vertexNormals = []
-    for vertIndex in range(len(model.vertices)):
-        vertNorm = getVertexNormal(vertIndex, faceNormals)
-        vertexNormals.append(vertNorm)
+    vertexNormals = model.get_vertex_normals(faceNormals)
 
     # Render the image iterating through faces
     for face in model.faces:

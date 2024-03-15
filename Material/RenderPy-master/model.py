@@ -63,6 +63,23 @@ class Model(object):
 
         return faceNormals
 
+    def get_vertex_normals(self, faceNormals: dict[int, list[Vector]]):
+        """
+        (Copied and pasted from the original `render.py`)
+        """
+        vertexNormals = []
+        for vertIndex in range(len(self.vertices)):
+
+            # Compute vertex normals by averaging the normals of adjacent faces
+            normal = Vector(0, 0, 0)
+            for adjNormal in faceNormals[vertIndex]:
+                normal = normal + adjNormal
+            vertNorm = normal / len(faceNormals[vertIndex])
+
+            vertexNormals.append(vertNorm)
+
+        return vertexNormals
+
     def normalizeGeometry(self):
         maxCoords = [0, 0, 0]
 
