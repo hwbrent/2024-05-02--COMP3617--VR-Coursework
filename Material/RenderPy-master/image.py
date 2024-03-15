@@ -76,6 +76,9 @@ class Image(object):
         )
         self.buffer = row * height
 
+    def get_zBuffer(self) -> list[float]:
+        return [-float("inf")] * self.width * self.height
+
     def setPixel(self, x, y, color):
         """Set the color value for the pixel at (x, y)."""
         if (x not in range(0, self.width)) or (y not in range(0, self.height)):

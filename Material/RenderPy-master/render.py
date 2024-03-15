@@ -63,7 +63,7 @@ def render(model: Model) -> Image:
     image = Image(color=Color(255, 255, 255, 255))
 
     # Init z-buffer
-    zBuffer = [-float("inf")] * image.width * image.height
+    zBuffer = image.get_zBuffer()
 
     # Calculate face normals
     faceNormals = model.get_face_normals()
