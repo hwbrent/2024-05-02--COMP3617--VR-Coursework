@@ -92,8 +92,6 @@ def main() -> None:
     model = Model("data/headset.obj")
     model.normalizeGeometry()
 
-    image = Image(color=Color(255, 255, 255, 255))
-
     dataset = Dataset()
     rows = dataset.df.values
     num_rows = len(rows)
@@ -117,6 +115,7 @@ def main() -> None:
         time_elapsed = round(timer() - start_time, 2)
         print(f"{renders_done} ({pctg_done}%) | {imu_time} | {time_elapsed}")
 
+        image = Image.white()
         zBuffer = image.get_zBuffer()
 
         if prev_time is None:
