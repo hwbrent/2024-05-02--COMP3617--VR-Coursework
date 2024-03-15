@@ -105,31 +105,25 @@ def main() -> None:
         image = Image.white()
         zBuffer = image.get_zBuffer()
 
-        if prev_time is None:
-            prev_time = time
+        if prev_time is not None:
+            time_diff = time - prev_time
 
-            render(model, image, zBuffer)
-            image.show()
-            video.add_frame(time, image)
-            continue
+            orientation *= get_dead_reckoning_filter(gyroscope, time_diff)
+            orientation.normalise()
 
-        time_diff = time - prev_time
-        prev_time = time
+            orientation = apply_tilt_correction(accelerometer, orientation, gyroscope)
+            orientation.normalise()
 
-        orientation *= get_dead_reckoning_filter(gyroscope, time_diff)
-        orientation.normalise()
-
-        orientation = apply_tilt_correction(accelerometer, orientation, gyroscope)
-        orientation.normalise()
-
-        model.rotate(matrix=orientation.to_rotation_matrix())
+            model.rotate(matrix=orientation.to_rotation_matrix())
 
         render(model, image, zBuffer)
         image.show()
-
         video.add_frame(time, image)
 
+        prev_time = time
+
     video.save()
+
     Image.clean_up()
 
 
