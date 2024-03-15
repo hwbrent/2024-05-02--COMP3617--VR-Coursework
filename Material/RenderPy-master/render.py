@@ -81,24 +81,19 @@ def render(model: Model) -> Image:
         transformed = []
         for p, n in zip([p0, p1, p2], [n0, n1, n2]):
             intensity = n * lightDir
+            screen_xy = getPerspectiveProjection(p, image)
 
             # Intensity < 0 means light is shining through the back of the face
             # In this case, don't draw the face at all ("back-face culling")
-            if intensity < 0:
-                cull = True  # Back face culling is disabled in this version
-
-            # coords = getOrthographicProjection(*p.xyz, image)
-            coords = getPerspectiveProjection(p, image)
-            if coords is None:
-                continue
+            if intensity < 0 or screen_xy is None:
+                cull = True
+                break
 
             color = Color(intensity * 255, intensity * 255, intensity * 255, 255)
-            point = Point(*coords, p.z, color)
+            point = Point(*screen_xy, p.z, color)
             transformed.append(point)
 
-        # Don't draw triangles whose vertices have been cut off
-        should_draw = (not cull) and len(transformed) == 3
-        if not should_draw:
+        if cull:
             continue
 
         triangle = Triangle(*transformed)
