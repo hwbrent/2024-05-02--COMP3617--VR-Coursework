@@ -8,6 +8,7 @@ from vector import Vector, Quaternion, EulerAngles
 from dataset import Dataset
 from video import Video
 from benchmarking import show_progress
+from tracking import get_dead_reckoning_filter
 
 FOCAL_LENGTH = 1
 NEAR_CLIP = 0.1
@@ -128,10 +129,7 @@ def main() -> None:
         gyroscope = row[1:4]
         accelerometer = row[4:7]
 
-        """ Problem 3 Question 1 """
-        g_angles = EulerAngles(*(gyroscope * time_diff))
-        g_orientation = g_angles.to_quaternion()
-        orientation *= g_orientation
+        orientation *= get_dead_reckoning_filter(gyroscope, time_diff)
         orientation.normalise()
 
         """ Problem 3 Question 2 """
