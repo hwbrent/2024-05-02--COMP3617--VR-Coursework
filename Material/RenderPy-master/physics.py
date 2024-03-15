@@ -4,6 +4,18 @@ from model import Model
 from vector import Vector
 
 
+def get_drag(velocity: float) -> float:
+    # Formula is:
+    #   D = Cd * (0.5 * r) * V**2 * A
+    # Where:
+    #   D  = drag
+    #   Cd = drag coefficient
+    #   r  = air density
+    #   V  = velocity
+    #   A  = reference area on which the drag coefficient is based
+    pass
+
+
 def get_bounding_sphere(model: Model) -> tuple[Vector, float]:
     """
     --- Problem 5 Question 2 ---
