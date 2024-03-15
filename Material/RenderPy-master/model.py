@@ -99,11 +99,8 @@ class Model(object):
         centre = np.mean([v.xyz for v in self.vertices], axis=0)
         v_centre = Vector(*centre)
 
-        radius = 0
-
-        # The distance between the furthest-away vertex and the centre is
-        # the radius of the sphere
-        for v in self.vertices:
-            radius = max(radius, (v - v_centre).norm())
+        # The radius is the distance of the furthest-away vertex from
+        # v_centre
+        radius = max((v_centre - v).norm() for v in self.vertices)
 
         return v_centre, radius
