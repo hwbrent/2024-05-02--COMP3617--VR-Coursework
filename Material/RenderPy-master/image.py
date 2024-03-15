@@ -76,6 +76,13 @@ class Image(object):
         )
         self.buffer = row * height
 
+    @classmethod
+    def white(cls):
+        """
+        Returns a white image with the default height and width.
+        """
+        return cls(color=Color(255, 255, 255, 255))
+
     def get_zBuffer(self) -> list[float]:
         return [-float("inf")] * self.width * self.height
 
