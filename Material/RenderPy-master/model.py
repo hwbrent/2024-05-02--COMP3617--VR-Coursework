@@ -40,6 +40,8 @@ class Model(object):
                     corner3 = int(segments[i + 1].split("/")[0]) - 1
                     self.faces.append([corner1, corner2, corner3])
 
+        self.sphere_centre, self.sphere_radius = self.get_bounding_sphere()
+
     def normalizeGeometry(self):
         maxCoords = [0, 0, 0]
 
@@ -86,3 +88,22 @@ class Model(object):
         """
 
         self.vertices = [v.scale(sx, sy, sz) for v in self.vertices]
+
+    def get_bounding_sphere(self) -> tuple[Vector, float]:
+        """
+        --- Problem 5 Question 2 ---
+
+        Gets the centre and radius of this `Model`'s bounding sphere
+        """
+        # The average of all the xyz values of the vertices
+        centre = np.mean([v.xyz for v in self.vertices], axis=0)
+        v_centre = Vector(*centre)
+
+        radius = 0
+
+        # The distance between the furthest-away vertex and the centre is
+        # the radius of the sphere
+        for v in self.vertices:
+            radius = max(radius, (v - v_centre).norm())
+
+        return v_centre, radius
