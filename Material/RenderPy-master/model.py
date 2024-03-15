@@ -11,9 +11,13 @@ from physics import get_bounding_sphere
 
 
 class Model(object):
+    MASS = 0.515  # kilograms. See https://vr-compare.com/headset/metaquest3
+
     def __init__(self, file):
         self.vertices = np.array([])
         self.faces = []
+
+        self.velocity = 0
 
         # Read in the file
         f = open(file, "r")

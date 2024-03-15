@@ -37,7 +37,13 @@ def get_acceleration(model: Model) -> float:
     # - The drag will eventually balance out the weight
     # - Then, there will be no net external force
     # - So the acceleration will become 0 (i.e. terminal velocity)
-    pass
+
+    m = model.MASS
+
+    D = get_drag(model.velocity)
+    W = m * G
+
+    return (W - D) / m
 
 
 def get_bounding_sphere(model: Model) -> tuple[Vector, float]:
