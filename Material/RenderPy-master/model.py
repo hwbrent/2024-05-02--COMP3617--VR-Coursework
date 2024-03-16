@@ -19,6 +19,8 @@ class Model(object):
         self.file = file
         self.velocity = 0
 
+        self.translation = Vector(0, 0, 0)
+
         self.parse_file()
         self.sphere_centre, self.sphere_radius = get_bounding_sphere(self)
 
@@ -96,7 +98,7 @@ class Model(object):
 
         self.vertices *= 1 / max(maxCoords)
 
-    def translate(self, dx: int, dy: int, dz: int) -> None:
+    def translate(self, dx: int, dy: int, dz: int, record: bool = False) -> None:
         """
         -- Problem 1 Question 3 --
 
@@ -105,6 +107,10 @@ class Model(object):
         """
 
         self.vertices = [v.translate(dx, dy, dz) for v in self.vertices]
+
+        if record:
+            # Record what the translation was
+            self.translation += Vector(dx, dy, dz)
 
     def rotate(self, **kwargs) -> None:
         """
@@ -121,7 +127,17 @@ class Model(object):
         case2 = keys == ["matrix"]
         assert case1 or case2
 
+        # First, translate the model back to the origin, so that the rotation
+        # occurs round the centre of the model, rather than rotating the
+        # model around the centre, if that makes sense
+        opposite = self.translation.get_negation()
+        self.translate(*opposite.xyz, False)
+
+        # Then, do the actual rotation
         self.vertices = [v.rotate(**kwargs) for v in self.vertices]
+
+        # Then translate the model back to where it was before
+        self.translate(*self.translation.xyz, False)
 
     def scale(self, sx, sy, sz) -> None:
         """
