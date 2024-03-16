@@ -133,8 +133,7 @@ class Model(object):
         # First, translate the model back to the origin, so that the rotation
         # occurs round the centre of the model, rather than rotating the
         # model around the centre, if that makes sense
-        opposite = self.translation.get_negation()
-        self.translate(*opposite.xyz, False)
+        self.translate(*-self.translation.xyz, False)
 
         # Then, do the actual rotation
         self.vertices = [v.rotate(**kwargs) for v in self.vertices]

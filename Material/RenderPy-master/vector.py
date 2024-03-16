@@ -200,12 +200,6 @@ class Vector(object):
         """
         return self.xyz / self.w
 
-    def get_negation(self) -> "Vector":
-        """
-        Gets and returns the "inverse" or "negation" of this `Vector`
-        """
-        return Vector(*(-1 * self.components))
-
     # Overrides
     def __mul__(self, other):
         """If multiplied by another vector, return the dot product.
