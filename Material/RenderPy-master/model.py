@@ -98,7 +98,7 @@ class Model(object):
 
         self.vertices *= 1 / max(maxCoords)
 
-    def translate(self, dx: int, dy: int, dz: int, record: bool = False) -> None:
+    def translate(self, dx: int, dy: int, dz: int, record: bool = True) -> None:
         """
         -- Problem 1 Question 3 --
 
