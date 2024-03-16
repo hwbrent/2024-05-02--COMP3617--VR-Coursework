@@ -87,6 +87,8 @@ def main() -> None:
     model = Model("data/headset.obj")
     model.normalizeGeometry()
 
+    fallers = Model.get_fallers()
+
     dataset = Dataset()
 
     video = Video()

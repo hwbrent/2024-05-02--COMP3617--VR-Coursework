@@ -153,3 +153,24 @@ class Model(object):
 
         self.vertices = [v.scale(sx, sy, sz) for v in self.vertices]
         self.sphere_centre = self.sphere_centre.scale(sx, sy, sz)
+
+    @classmethod
+    def get_fallers(cls) -> list["Model"]:
+        """
+        Gets a `list` of `Model`s with random positions and
+        velocities
+        """
+        fallers = []
+
+        for _ in range(5):
+            faller = cls("data/headset.obj")
+
+            # Generate a random translation which places the model above the
+            # camera frustum (i.e. out of view)
+
+            # Generate a random velocity, ideally pointing towards the main
+            # rotating model
+
+            fallers.append(faller)
+
+        return fallers
