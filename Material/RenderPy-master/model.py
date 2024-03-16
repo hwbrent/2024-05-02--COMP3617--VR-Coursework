@@ -113,7 +113,7 @@ class Model(object):
 
         if record:
             # Record what the translation was
-            self.translation.translate(dx, dy, dz)
+            self.translation = self.translation.translate(dx, dy, dz)
 
     def rotate(self, **kwargs) -> None:
         """
