@@ -96,7 +96,10 @@ class Model(object):
             maxCoords[1] = max(abs(vertex.y), maxCoords[1])
             maxCoords[2] = max(abs(vertex.z), maxCoords[2])
 
-        self.vertices *= 1 / max(maxCoords)
+        for vertex in self.vertices:
+            vertex.x = vertex.x / maxCoords[0]
+            vertex.y = vertex.y / maxCoords[1]
+            vertex.z = vertex.z / maxCoords[2]
 
     def translate(self, dx: int, dy: int, dz: int, record: bool = True) -> None:
         """
