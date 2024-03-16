@@ -110,6 +110,7 @@ class Model(object):
         """
 
         self.vertices = [v.translate(dx, dy, dz) for v in self.vertices]
+        self.sphere_centre = self.sphere_centre.translate(dx, dy, dz)
 
         if record:
             # Record what the translation was
@@ -137,6 +138,7 @@ class Model(object):
 
         # Then, do the actual rotation
         self.vertices = [v.rotate(**kwargs) for v in self.vertices]
+        self.sphere_centre = self.sphere_centre.rotate(**kwargs)
 
         # Then translate the model back to where it was before
         self.translate(*self.translation.xyz, False)
@@ -150,3 +152,4 @@ class Model(object):
         """
 
         self.vertices = [v.scale(sx, sy, sz) for v in self.vertices]
+        self.sphere_centre = self.sphere_centre.scale(sx, sy, sz)
