@@ -230,6 +230,10 @@ class Vector(object):
     def __iter__(self):
         return self.components.__iter__()
 
+    def __str__(self) -> str:
+        comps = ", ".join(str(s) for s in self.components)
+        return f"Vector({comps})"
+
 
 class Quaternion:
     def __init__(self, w: float, x: float, y: float, z: float) -> None:
