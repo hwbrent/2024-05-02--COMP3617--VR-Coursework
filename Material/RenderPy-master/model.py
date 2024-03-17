@@ -4,6 +4,7 @@
 """
 
 from vector import Vector
+from physics import get_bounding_sphere
 
 import numpy as np
 
@@ -12,8 +13,6 @@ class Model(object):
     MASS = 0.515  # kilograms. See https://vr-compare.com/headset/metaquest3
 
     def __init__(self, file: str):
-        from physics import get_bounding_sphere
-
         self.vertices = np.array([])
         self.faces = []
         self.file = file
@@ -22,7 +21,7 @@ class Model(object):
         self.translation = Vector(0, 0, 0)
 
         self.parse_file()
-        self.sphere_centre, self.sphere_radius = get_bounding_sphere(self)
+        self.sphere_centre, self.sphere_radius = get_bounding_sphere(self.vertices)
 
     def parse_file(self) -> None:
         """
