@@ -12,11 +12,12 @@ import numpy as np
 class Model(object):
     MASS = 0.515  # kilograms. See https://vr-compare.com/headset/metaquest3
 
-    def __init__(self, file: str):
+    def __init__(self, file: str, velocity: Vector = Vector(0, 0, 0)):
         self.vertices = np.array([])
         self.faces = []
         self.file = file
-        self.velocity = 0
+
+        self.velocity = velocity
 
         self.translation = Vector(0, 0, 0)
 
