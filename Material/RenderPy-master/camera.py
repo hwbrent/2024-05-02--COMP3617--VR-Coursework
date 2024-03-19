@@ -8,6 +8,8 @@ NEAR_CLIP = 0.1
 # visible.
 camera = Vector(0, 0, -2)
 
+NEAR_CLIP_Z = camera.z + NEAR_CLIP
+
 
 def getPerspectiveProjection(vector: Vector, image: Image) -> None | tuple[int, int]:
     """
