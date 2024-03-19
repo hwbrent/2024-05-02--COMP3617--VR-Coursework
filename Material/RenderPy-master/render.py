@@ -54,7 +54,7 @@ def render(model: Model, image: Image, zBuffer: list[float]) -> None:
 
 def main() -> None:
     ### Initialise "globals" ###
-    model = Model(HEADSET_100)
+    model = Model()
     model.normalizeGeometry()
 
     dataset = Dataset()

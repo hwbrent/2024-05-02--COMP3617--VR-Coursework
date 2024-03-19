@@ -24,7 +24,7 @@ COW         = "cow.obj"
 
 
 class Model(object):
-    def __init__(self, file: str):
+    def __init__(self, file: str = HEADSET_100):
         # Define what the attributes are
         self.file = ""
         self.vertices = np.array([])
