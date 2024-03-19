@@ -126,10 +126,10 @@ class Model(object):
             vertex.y = vertex.y / maxCoords[1]
             vertex.z = vertex.z / maxCoords[2]
 
-    def transform(self, method, *args, **kwargs) -> None:
+    def transform(self, method, **kwargs) -> None:
         # Apply transform
-        self.vertices = [getattr(v, method)(*args, **kwargs) for v in self.vertices]
-        self.centre = getattr(self.centre, method)(*args, **kwargs)
+        self.vertices = [getattr(v, method)(**kwargs) for v in self.vertices]
+        self.centre = getattr(self.centre, method)(**kwargs)
 
         # Check if model needs to be reloaded
 
@@ -145,7 +145,12 @@ class Model(object):
             # Record what the translation was
             self.translation = self.translation.translate(dx, dy, dz)
 
-        self.transform("translate", dx, dy, dz, record)
+        self.transform(
+            "translate",
+            dx=dx,
+            dy=dy,
+            dz=dz,
+        )
 
     def rotate(self, **kwargs) -> None:
         """
@@ -181,4 +186,9 @@ class Model(object):
         and `sz` respectively.
         """
 
-        self.transform("scale", sx, sy, sz)
+        self.transform(
+            "scale",
+            sx=sx,
+            sy=sy,
+            sz=sz,
+        )

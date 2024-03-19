@@ -121,13 +121,17 @@ class Vector(object):
         assert len(self) == 4, "Cross product only implemented for 3D vectors."
         return Vector(*np.cross(self.xyz, other.xyz), self.DEFAULT_W)
 
-    def translate(self, dx: int, dy: int, dz: int, *args, **kwargs) -> "Vector":
+    def translate(self, **kwargs) -> "Vector":
         """
         -- Problem 1 Question 3 --
 
         Returns a new `Vector` equal to this one translated in the x, y and
         z axes by `dx`, `dy`, `dz` respectively.
         """
+
+        dx = kwargs["dx"]
+        dy = kwargs["dy"]
+        dz = kwargs["dz"]
 
         matrix = np.array(
             [
@@ -142,7 +146,7 @@ class Vector(object):
 
         return Vector(*new)
 
-    def rotate(self, *args, **kwargs) -> "Vector":
+    def rotate(self, **kwargs) -> "Vector":
         """
         -- Problem 1 Question 3 --
 
@@ -171,13 +175,17 @@ class Vector(object):
 
         return Vector(*rotated)
 
-    def scale(self, sx, sy, sz, **kwargs):
+    def scale(self, **kwargs):
         """
         -- Problem 1 Question 3 --
 
         Returns a new `Vector` equal to this one scaled in the x, y and
         z axes by `sx`, `sy`, `sz` respectively.
         """
+
+        sx = kwargs["sx"]
+        sy = kwargs["sy"]
+        sz = kwargs["sz"]
 
         matrix = np.array(
             [
