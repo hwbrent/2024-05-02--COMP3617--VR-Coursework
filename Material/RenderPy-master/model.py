@@ -135,7 +135,9 @@ class Model(object):
 
         # Check if model needs to be reloaded
 
-    def translate(self, dx: int, dy: int, dz: int, record: bool = True) -> None:
+    def translate(
+        self, dx: float = 0, dy: float = 0, dz: float = 0, record: bool = True
+    ) -> None:
         """
         -- Problem 1 Question 3 --
 
@@ -180,7 +182,7 @@ class Model(object):
         # Then translate the model back to where it was before
         self.translate(*self.translation.xyz, False)
 
-    def scale(self, sx, sy, sz) -> None:
+    def scale(self, sx: float = 1, sy: float = 1, sz: float = 1) -> None:
         """
         -- Problem 1 Question 3 --
 
