@@ -3,6 +3,8 @@
 	Written using only the Python standard library.
 """
 
+import random
+
 from vector import Vector
 from physics import get_bounding_sphere
 
@@ -163,13 +165,27 @@ class Model(object):
         fallers = []
 
         for _ in range(5):
-            faller = cls("data/headset.obj")
+            ### Generate a random velocity ###
+            direction = np.random.randn(3)
+            direction /= np.linalg.norm(direction)  # normalise to unit length
+            magnitude = np.random.uniform(0, 1)
+            xyz = -direction * magnitude  # -1 to point towards origin
+            velocity = Vector(*xyz)
 
-            # Generate a random translation which places the model above the
-            # camera frustum (i.e. out of view)
+            # Instantiate the `Model` object with the velocity
+            faller = cls("data/headset.obj", velocity)
 
-            # Generate a random velocity, ideally pointing towards the main
-            # rotating model
+            ### Scale the object down to 1/4 its original size ###
+            faller.scale(0.25, 0.25, 0.25)
+
+            ### Generate a random translation ###
+            # We want to place the model above the camera frustum (i.e. out
+            # of view). I manually tested these values to see what would work
+            faller.translate(
+                random.randrange(-4, 5),
+                3,
+                random.randrange(0, 5),
+            )
 
             fallers.append(faller)
 
