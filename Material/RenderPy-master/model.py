@@ -5,6 +5,7 @@
 
 from vector import Vector
 from physics import get_bounding_sphere
+from camera import distance_to, lod_swap_needed
 
 import numpy as np
 
@@ -130,11 +131,14 @@ class Model(object):
     def transform(self, method, **kwargs) -> None:
         call_method = lambda obj: getattr(obj, method)(**kwargs)
 
+        prev_distance = distance_to(self.centre)
+
         # Apply transform
         self.vertices = [call_method(v) for v in self.vertices]
         self.centre = call_method(self.centre)
 
-        # Check if model needs to be reloaded
+        if not lod_swap_needed(prev_distance):
+            return
 
     def translate(
         self, dx: float = 0, dy: float = 0, dz: float = 0, record: bool = True
