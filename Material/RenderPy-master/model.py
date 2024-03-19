@@ -24,19 +24,28 @@ COW         = "cow.obj"
 
 class Model(object):
     def __init__(self, file: str):
+        # Define what the attributes are
+        self.file = ""
         self.vertices = np.array([])
         self.faces = []
-        self.file = file
 
-        self.parse_file()
+        # Set the attributes
+        self.load(file)
+
+    def load(self, file: str) -> None:
+        self.file = file
+        self.vertices, self.faces = self.parse_file()
 
     def parse_file(self) -> None:
         """
         This function populates `self.vertices` and `self.faces` according
         to the information parsed in the file at location `self.file`.
         """
+        vertices = []
+        faces = []
 
-        with open(self.file, "r") as f:
+        file_path = os.path.join(data_dir, self.file)
+        with open(file_path, "r") as f:
             for line in f:
                 if line.startswith("#"):
                     continue
@@ -47,7 +56,7 @@ class Model(object):
                 # Vertices
                 if segments[0] == "v":
                     vertex = Vector(*[float(i) for i in segments[1:4]])
-                    self.vertices = np.append(self.vertices, vertex)
+                    vertices.append(vertex)
 
                 # Faces
                 elif segments[0] == "f":
@@ -57,7 +66,11 @@ class Model(object):
                         corner1 = int(segments[1].split("/")[0]) - 1
                         corner2 = int(segments[i].split("/")[0]) - 1
                         corner3 = int(segments[i + 1].split("/")[0]) - 1
-                        self.faces.append([corner1, corner2, corner3])
+                        faces.append([corner1, corner2, corner3])
+
+        vertices = np.array(vertices)
+
+        return vertices, faces
 
     def get_face_normals(self) -> dict[int, list[Vector]]:
         """
