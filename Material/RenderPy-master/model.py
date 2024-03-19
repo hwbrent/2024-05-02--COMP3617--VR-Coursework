@@ -126,6 +126,13 @@ class Model(object):
             vertex.y = vertex.y / maxCoords[1]
             vertex.z = vertex.z / maxCoords[2]
 
+    def transform(self, method, *args, **kwargs) -> None:
+        # Apply transform
+        self.vertices = [getattr(v, method)(*args, **kwargs) for v in self.vertices]
+        self.centre = getattr(self.centre, method)(*args, **kwargs)
+
+        # Check if model needs to be reloaded
+
     def translate(self, dx: int, dy: int, dz: int, record: bool = True) -> None:
         """
         -- Problem 1 Question 3 --
@@ -134,12 +141,11 @@ class Model(object):
         respectively.
         """
 
-        self.vertices = [v.translate(dx, dy, dz) for v in self.vertices]
-        self.centre = self.centre.translate(dx, dy, dz)
-
         if record:
             # Record what the translation was
             self.translation = self.translation.translate(dx, dy, dz)
+
+        self.transform("translate", dx, dy, dz, record)
 
     def rotate(self, **kwargs) -> None:
         """
@@ -162,8 +168,7 @@ class Model(object):
         self.translate(*-self.translation.xyz, False)
 
         # Then, do the actual rotation
-        self.vertices = [v.rotate(**kwargs) for v in self.vertices]
-        self.centre = self.centre.rotate(**kwargs)
+        self.transform("rotate", **kwargs)
 
         # Then translate the model back to where it was before
         self.translate(*self.translation.xyz, False)
@@ -176,5 +181,4 @@ class Model(object):
         and `sz` respectively.
         """
 
-        self.vertices = [v.scale(sx, sy, sz) for v in self.vertices]
-        self.centre = self.centre.scale(sx, sy, sz)
+        self.transform("scale", sx, sy, sz)

@@ -121,7 +121,7 @@ class Vector(object):
         assert len(self) == 4, "Cross product only implemented for 3D vectors."
         return Vector(*np.cross(self.xyz, other.xyz), self.DEFAULT_W)
 
-    def translate(self, dx: int, dy: int, dz: int) -> "Vector":
+    def translate(self, dx: int, dy: int, dz: int, *args, **kwargs) -> "Vector":
         """
         -- Problem 1 Question 3 --
 
@@ -142,7 +142,7 @@ class Vector(object):
 
         return Vector(*new)
 
-    def rotate(self, **kwargs) -> "Vector":
+    def rotate(self, *args, **kwargs) -> "Vector":
         """
         -- Problem 1 Question 3 --
 
@@ -171,7 +171,7 @@ class Vector(object):
 
         return Vector(*rotated)
 
-    def scale(self, sx, sy, sz):
+    def scale(self, sx, sy, sz, **kwargs):
         """
         -- Problem 1 Question 3 --
 
