@@ -127,9 +127,11 @@ class Model(object):
             vertex.z = vertex.z / maxCoords[2]
 
     def transform(self, method, **kwargs) -> None:
+        call_method = lambda obj: getattr(obj, method)(**kwargs)
+
         # Apply transform
-        self.vertices = [getattr(v, method)(**kwargs) for v in self.vertices]
-        self.centre = getattr(self.centre, method)(**kwargs)
+        self.vertices = [call_method(v) for v in self.vertices]
+        self.centre = call_method(self.centre)
 
         # Check if model needs to be reloaded
 
