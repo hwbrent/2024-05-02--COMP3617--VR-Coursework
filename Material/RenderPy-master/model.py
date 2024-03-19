@@ -147,7 +147,7 @@ class Model(object):
 
         if record:
             # Record what the translation was
-            self.translation = self.translation.translate(dx, dy, dz)
+            self.translation = self.translation.translate(dx=dx, dy=dy, dz=dz)
 
         self.transform(
             "translate",
