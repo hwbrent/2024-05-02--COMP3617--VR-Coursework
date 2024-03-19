@@ -4,6 +4,7 @@
 """
 
 from vector import Vector
+from physics import get_bounding_sphere
 
 import numpy as np
 
@@ -28,6 +29,10 @@ class Model(object):
         self.file = ""
         self.vertices = np.array([])
         self.faces = []
+        self.centre = Vector(0, 0, 0)
+        self.radius = 0.0
+
+        self.translation = Vector(0, 0, 0)
 
         # Set the attributes
         self.load(file)
@@ -35,6 +40,7 @@ class Model(object):
     def load(self, file: str) -> None:
         self.file = file
         self.vertices, self.faces = self.parse_file()
+        self.centre, self.radius = get_bounding_sphere(self.vertices)
 
     def parse_file(self) -> None:
         """
@@ -120,7 +126,7 @@ class Model(object):
             vertex.y = vertex.y / maxCoords[1]
             vertex.z = vertex.z / maxCoords[2]
 
-    def translate(self, dx: int, dy: int, dz: int) -> None:
+    def translate(self, dx: int, dy: int, dz: int, record: bool = True) -> None:
         """
         -- Problem 1 Question 3 --
 
@@ -129,6 +135,11 @@ class Model(object):
         """
 
         self.vertices = [v.translate(dx, dy, dz) for v in self.vertices]
+        self.centre = self.centre.translate(dx, dy, dz)
+
+        if record:
+            # Record what the translation was
+            self.translation = self.translation.translate(dx, dy, dz)
 
     def rotate(self, **kwargs) -> None:
         """
@@ -145,7 +156,17 @@ class Model(object):
         case2 = keys == ["matrix"]
         assert case1 or case2
 
+        # First, translate the model back to the origin, so that the rotation
+        # occurs round the centre of the model, rather than rotating the
+        # model around the centre, if that makes sense
+        self.translate(*-self.translation.xyz, False)
+
+        # Then, do the actual rotation
         self.vertices = [v.rotate(**kwargs) for v in self.vertices]
+        self.centre = self.centre.rotate(**kwargs)
+
+        # Then translate the model back to where it was before
+        self.translate(*self.translation.xyz, False)
 
     def scale(self, sx, sy, sz) -> None:
         """
@@ -156,3 +177,4 @@ class Model(object):
         """
 
         self.vertices = [v.scale(sx, sy, sz) for v in self.vertices]
+        self.centre = self.centre.scale(sx, sy, sz)
