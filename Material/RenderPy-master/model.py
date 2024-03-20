@@ -5,7 +5,7 @@
 
 from vector import Vector
 from physics import get_bounding_sphere
-from camera import distance_to, lod_swap_needed
+from camera import distance_to, get_lod_swap_range
 
 import numpy as np
 
@@ -137,8 +137,29 @@ class Model(object):
         self.vertices = [call_method(v) for v in self.vertices]
         self.centre = call_method(self.centre)
 
-        if not lod_swap_needed(prev_distance):
+        self.handle_lod_swap(prev_distance)
+
+    def handle_lod_swap(self, prev_distance: float) -> None:
+        """
+        Checks if the current model needs to be swapped with another in
+        in accordance with the level-of-detail streategy
+        """
+
+        lod_range = get_lod_swap_range(prev_distance)
+        if lod_range is None:
             return
+
+        print(lod_range)
+
+        return
+
+        # fmt: off
+        self.load(
+            HEADSET_100 if lod_range == "closest" else
+            HEADSET_50 if lod_range == "middle" else
+            HEADSET_25
+        )
+        # fmt: on
 
     def translate(
         self, dx: float = 0, dy: float = 0, dz: float = 0, record: bool = True

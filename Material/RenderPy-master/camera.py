@@ -12,15 +12,15 @@ camera = Vector(0, 0, -2)
 
 NEAR_CLIP_Z = camera.z + NEAR_CLIP
 
-# Consts relating to the min/max values of the ranges of distances used to
-# dictate which model is used as part of the level-of-detail optimisation
-# strategy
-LOD_RANGE_CLOSEST_MIN = NEAR_CLIP_Z
-LOD_RANGE_CLOSEST_MAX = 4
-LOD_RANGE_MIDDLE_MIN = 4
-LOD_RANGE_MIDDLE_MAX = 10
-LOD_RANGE_FURTHEST_MIN = 10
-LOD_RANGE_FURTHEST_MAX = math.inf
+
+# Dict relating to the level-of-detail optimisation strategy. The key is the
+# "name" of the range, and the value is the min & max values of the range
+# of distances used to dictate which model is used
+lod_ranges = {
+    "closest": (NEAR_CLIP_Z, 4),
+    "middle": (4, 10),
+    "furthest": (10, math.inf),
+}
 
 
 def getPerspectiveProjection(vector: Vector, image: Image) -> None | tuple[int, int]:
@@ -54,10 +54,11 @@ def distance_to(vector: Vector) -> float:
     return (camera - vector).norm()
 
 
-def lod_swap_needed(centre: Vector, prev_distance: float) -> bool:
+def get_lod_swap_range(centre: Vector, prev_distance: float) -> str | None:
     """
-    Returns a bool indicating whether the model with centre `centre` should
-    be swapped out for one of a different level of detail
+    If the model with centre `centre` should be swapped out for one of a
+    different level of detail, this function returns a string indicating
+    which model should be chosen. Else, it returns `None`
     """
 
     # Basically we three "ranges" which correspond to the distances at which
@@ -67,16 +68,16 @@ def lod_swap_needed(centre: Vector, prev_distance: float) -> bool:
 
     new_distance = distance_to(centre)
 
-    # These are the "ranges". Couldn't use the `range` object because the
-    # distance is a float
-    # fmt: off
-    in_closest  = lambda d: LOD_RANGE_CLOSEST_MIN  <= d < LOD_RANGE_CLOSEST_MAX
-    in_middle   = lambda d: LOD_RANGE_MIDDLE_MIN   <= d < LOD_RANGE_MIDDLE_MAX
-    in_furthest = lambda d: LOD_RANGE_FURTHEST_MIN <= d < LOD_RANGE_FURTHEST_MAX
+    for range_name, bounds in lod_ranges.items():
+        lower_bound, upper_bound = bounds
 
-    return (
-           (in_closest(prev_distance)  != in_closest(new_distance))
-        or (in_middle(prev_distance)   != in_middle(new_distance))
-        or (in_furthest(prev_distance) != in_furthest(new_distance))
-    )
-    # fmt: on
+        # Whether or not the previous and current distances are within the
+        # min/max values of this "range"
+        prev_in_range = lower_bound <= prev_distance < upper_bound
+        new_in_range = lower_bound <= new_distance < upper_bound
+
+        # Return the name of the range (e.g. "furthest")
+        if prev_in_range != new_in_range:
+            return range_name
+
+    return None
