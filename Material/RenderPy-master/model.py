@@ -142,7 +142,8 @@ class Model(object):
     def handle_lod_swap(self, prev_distance: float) -> None:
         """
         Checks if the current model needs to be swapped with another in
-        in accordance with the level-of-detail streategy
+        in accordance with the level-of-detail streategy, and if so, it
+        carries this out
         """
 
         lod_range = get_lod_swap_range(prev_distance)
