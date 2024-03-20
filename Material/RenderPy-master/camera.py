@@ -55,14 +55,16 @@ def lod_swap_needed(centre: Vector, prev_distance: float) -> bool:
 
     new_distance = distance_to(centre)
 
-    # `cat` = category
-    cat1 = lambda d: NEAR_CLIP_Z <= d < 4
-    cat2 = lambda d: 4 <= d < 10
-    cat3 = lambda d: 10 <= d < 20
+    # These are the "ranges". Couldn't use the `range` object because the
+    # distance is a float
+    closest = lambda d: NEAR_CLIP_Z <= d < 4
+    middle = lambda d: 4 <= d < 10
+    furthest = lambda d: 10 <= d < 20
 
-    # p_ = previous, n_ = new
-    p_cat1, n_cat1 = cat1(prev_distance), cat1(new_distance)
-    p_cat2, n_cat2 = cat2(prev_distance), cat2(new_distance)
-    p_cat3, n_cat3 = cat3(prev_distance), cat3(new_distance)
-
-    return not ((p_cat1 == n_cat1) and (p_cat2 == n_cat2) and (p_cat3 == n_cat3))
+    # fmt: off
+    return (
+           (closest(prev_distance)  != closest(new_distance))
+        or (middle(prev_distance)   != middle(new_distance))
+        or (furthest(prev_distance) != furthest(new_distance))
+    )
+    # fmt: on
