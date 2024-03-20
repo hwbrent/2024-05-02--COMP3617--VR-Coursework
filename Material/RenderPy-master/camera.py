@@ -1,3 +1,5 @@
+import math
+
 from vector import Vector
 from image import Image
 
@@ -9,6 +11,16 @@ NEAR_CLIP = 0.1
 camera = Vector(0, 0, -2)
 
 NEAR_CLIP_Z = camera.z + NEAR_CLIP
+
+# Consts relating to the min/max values of the ranges of distances used to
+# dictate which model is used as part of the level-of-detail optimisation
+# strategy
+LOD_RANGE_CLOSEST_MIN = NEAR_CLIP_Z
+LOD_RANGE_CLOSEST_MAX = 4
+LOD_RANGE_MIDDLE_MIN = 4
+LOD_RANGE_MIDDLE_MAX = 10
+LOD_RANGE_FURTHEST_MIN = 10
+LOD_RANGE_FURTHEST_MAX = math.inf
 
 
 def getPerspectiveProjection(vector: Vector, image: Image) -> None | tuple[int, int]:
@@ -57,14 +69,14 @@ def lod_swap_needed(centre: Vector, prev_distance: float) -> bool:
 
     # These are the "ranges". Couldn't use the `range` object because the
     # distance is a float
-    closest = lambda d: NEAR_CLIP_Z <= d < 4
-    middle = lambda d: 4 <= d < 10
-    furthest = lambda d: 10 <= d < 20
-
     # fmt: off
+    in_closest  = lambda d: LOD_RANGE_CLOSEST_MIN  <= d < LOD_RANGE_CLOSEST_MAX
+    in_middle   = lambda d: LOD_RANGE_MIDDLE_MIN   <= d < LOD_RANGE_MIDDLE_MAX
+    in_furthest = lambda d: LOD_RANGE_FURTHEST_MIN <= d < LOD_RANGE_FURTHEST_MAX
+
     return (
-           (closest(prev_distance)  != closest(new_distance))
-        or (middle(prev_distance)   != middle(new_distance))
-        or (furthest(prev_distance) != furthest(new_distance))
+           (in_closest(prev_distance)  != in_closest(new_distance))
+        or (in_middle(prev_distance)   != in_middle(new_distance))
+        or (in_furthest(prev_distance) != in_furthest(new_distance))
     )
     # fmt: on
