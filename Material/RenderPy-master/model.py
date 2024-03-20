@@ -146,7 +146,7 @@ class Model(object):
         carries this out
         """
 
-        lod_range = get_lod_swap_range(prev_distance)
+        lod_range = get_lod_swap_range(self.centre, prev_distance)
         if lod_range is None:
             return
 
