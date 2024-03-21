@@ -154,10 +154,6 @@ class Model(object):
         if lod_range is None:
             return
 
-        print(lod_range)
-
-        return
-
         # fmt: off
         self.load(
             HEADSET_100 if lod_range == "closest" else
@@ -165,6 +161,12 @@ class Model(object):
             HEADSET_25
         )
         # fmt: on
+
+        # Get the cumulative transformations previously applied and reapply
+        # them to align the newly-loaded model with the previous model
+        self.translate(*self.translation.xyz, record=False)
+        self.rotate(self.rotation, record=False)
+        self.scale(*self.scaling.xyz, record=False)
 
     def translate(
         self, dx: float = 0, dy: float = 0, dz: float = 0, record: bool = True
