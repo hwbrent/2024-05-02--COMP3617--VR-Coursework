@@ -34,7 +34,9 @@ class Model(object):
         self.centre = Vector(0, 0, 0)
         self.radius = 0.0
 
+        # The cumulative transformations
         self.translation = Vector(0, 0, 0)
+        self.scaling = Vector(1, 1, 1)
 
         # Set the attributes
         self.load(file)
@@ -216,10 +218,7 @@ class Model(object):
         Scales this `Model` in-place in the x, y and z axes by `sx`, `sy`
         and `sz` respectively.
         """
+        kwargs = {"sx": sx, "sy": sy, "sz": sz}
 
-        self.transform(
-            "scale",
-            sx=sx,
-            sy=sy,
-            sz=sz,
-        )
+        self.scaling = self.scaling.scale(**kwargs)
+        self.transform("scale", **kwargs)
