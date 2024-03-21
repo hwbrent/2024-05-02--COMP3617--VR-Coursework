@@ -193,7 +193,6 @@ class Model(object):
         # Record the rotation
         self.rotation *= quaternion
         self.rotation.normalise()
-        print(*self.rotation)
 
         # First, translate the model back to the origin, so that the rotation
         # occurs round the centre of the model, rather than rotating the
