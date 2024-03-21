@@ -183,16 +183,16 @@ class Model(object):
 
         self.transform("translate", **kwargs)
 
-    def rotate(self, quaternion: Quaternion) -> None:
+    def rotate(self, quaternion: Quaternion, record: bool = True) -> None:
         """
         -- Problem 1 Question 3 --
 
         Rotates this `Model` in-place by the rotation matrix obtained from
         a `quaternion`
         """
-        # Record the rotation
-        self.rotation *= quaternion
-        self.rotation.normalise()
+        if record:
+            self.rotation *= quaternion
+            self.rotation.normalise()
 
         # First, translate the model back to the origin, so that the rotation
         # occurs round the centre of the model, rather than rotating the
@@ -205,7 +205,9 @@ class Model(object):
         # Then translate the model back to where it was before
         self.translate(*self.translation.xyz, False)
 
-    def scale(self, sx: float = 1, sy: float = 1, sz: float = 1) -> None:
+    def scale(
+        self, sx: float = 1, sy: float = 1, sz: float = 1, record: bool = True
+    ) -> None:
         """
         -- Problem 1 Question 3 --
 
@@ -214,5 +216,7 @@ class Model(object):
         """
         kwargs = {"sx": sx, "sy": sy, "sz": sz}
 
-        self.scaling = self.scaling.scale(**kwargs)
+        if record:
+            self.scaling = self.scaling.scale(**kwargs)
+
         self.transform("scale", **kwargs)
