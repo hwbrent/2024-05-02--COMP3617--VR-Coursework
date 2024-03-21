@@ -131,12 +131,25 @@ class Model(object):
             vertex.y = vertex.y / maxCoords[1]
             vertex.z = vertex.z / maxCoords[2]
 
-    def transform(self, method, record: bool, **kwargs) -> None:
+    def transform(self, method: str, record: bool, **kwargs) -> None:
+        """
+        Given a `method` (i.e. "translate", "rotate" or "scale"), this
+        function:
+        1. Applies the transform to all the `Vector`s in `self.vertices`
+        2. Applies the transform to `self.centre`
+        3. Triggers the checking and execution of level-of-detail model
+           version switching
+        """
+
+        # Anonymous function to dynamically call `method` with the parameters
+        # from `kwargs`.
+        # e.g. self.vertices[0].translate(dx=1, dy=2, dz=3)
         call_method = lambda obj: getattr(obj, method)(**kwargs)
 
+        # The distance before the transform is carried out
         prev_distance = distance_to(self.centre)
 
-        # Apply transform
+        # Apply the transform
         self.vertices = [call_method(v) for v in self.vertices]
         self.centre = call_method(self.centre)
 
