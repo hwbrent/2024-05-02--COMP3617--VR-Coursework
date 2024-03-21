@@ -140,7 +140,8 @@ class Model(object):
         self.vertices = [call_method(v) for v in self.vertices]
         self.centre = call_method(self.centre)
 
-        self.handle_lod_swap(prev_distance)
+        if record:
+            self.handle_lod_swap(prev_distance)
 
     def handle_lod_swap(self, prev_distance: float) -> None:
         """
@@ -181,7 +182,7 @@ class Model(object):
             # Record what the translation was
             self.translation = self.translation.translate(**kwargs)
 
-        self.transform("translate", **kwargs)
+        self.transform("translate", record, **kwargs)
 
     def rotate(self, quaternion: Quaternion, record: bool = True) -> None:
         """
@@ -200,7 +201,7 @@ class Model(object):
         self.translate(*-self.translation.xyz, False)
 
         # Then, do the actual rotation
-        self.transform("rotate", matrix=quaternion.to_rotation_matrix())
+        self.transform("rotate", record, matrix=quaternion.to_rotation_matrix())
 
         # Then translate the model back to where it was before
         self.translate(*self.translation.xyz, False)
@@ -219,4 +220,4 @@ class Model(object):
         if record:
             self.scaling = self.scaling.scale(**kwargs)
 
-        self.transform("scale", **kwargs)
+        self.transform("scale", record, **kwargs)
