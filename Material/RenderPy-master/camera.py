@@ -68,16 +68,17 @@ def get_lod_swap_range(centre: Vector, prev_distance: float) -> str | None:
 
     new_distance = distance_to(centre)
 
-    for range_name, bounds in lod_ranges.items():
-        lower_bound, upper_bound = bounds
+    # Gets the name of the range which distance `d` falls within
+    get_range = lambda d: next(
+        key for key, (lower, upper) in lod_ranges.items() if lower <= d < upper
+    )
 
-        # Whether or not the previous and current distances are within the
-        # min/max values of this "range"
-        prev_in_range = lower_bound <= prev_distance < upper_bound
-        new_in_range = lower_bound <= new_distance < upper_bound
+    prev_range = get_range(prev_distance)
+    new_range = get_range(new_distance)
 
-        # Return the name of the range (e.g. "furthest")
-        if prev_in_range != new_in_range:
-            return range_name
+    # If the ranges aren't the same, return the name of the range that was
+    # just entered
+    if new_range != prev_range:
+        return new_range
 
     return None
