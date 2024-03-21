@@ -174,16 +174,13 @@ class Model(object):
         respectively.
         """
 
+        kwargs = {"dx": dx, "dy": dy, "dz": dz}
+
         if record:
             # Record what the translation was
-            self.translation = self.translation.translate(dx=dx, dy=dy, dz=dz)
+            self.translation = self.translation.translate(**kwargs)
 
-        self.transform(
-            "translate",
-            dx=dx,
-            dy=dy,
-            dz=dz,
-        )
+        self.transform("translate", **kwargs)
 
     def rotate(self, **kwargs) -> None:
         """
