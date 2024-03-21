@@ -3,7 +3,7 @@
 	Written using only the Python standard library.
 """
 
-from vector import Vector
+from vector import Vector, Quaternion
 from physics import get_bounding_sphere
 from camera import distance_to, get_lod_swap_range
 
@@ -36,6 +36,7 @@ class Model(object):
 
         # The cumulative transformations
         self.translation = Vector(0, 0, 0)
+        self.rotation = Quaternion.identity()
         self.scaling = Vector(1, 1, 1)
 
         # Set the attributes
@@ -182,20 +183,17 @@ class Model(object):
 
         self.transform("translate", **kwargs)
 
-    def rotate(self, **kwargs) -> None:
+    def rotate(self, quaternion: Quaternion) -> None:
         """
         -- Problem 1 Question 3 --
 
-        Rotates this `Model` in-place either:
-        1) around `axis` by `angle`
-        2) by a `matrix`
+        Rotates this `Model` in-place by the rotation matrix obtained from
+        a `quaternion`
         """
-        keys = sorted(kwargs.keys())
-
-        # The two use-cases of this function
-        case1 = keys == ["angle", "axis"]
-        case2 = keys == ["matrix"]
-        assert case1 or case2
+        # Record the rotation
+        self.rotation *= quaternion
+        self.rotation.normalise()
+        print(*self.rotation)
 
         # First, translate the model back to the origin, so that the rotation
         # occurs round the centre of the model, rather than rotating the
@@ -203,7 +201,7 @@ class Model(object):
         self.translate(*-self.translation.xyz, False)
 
         # Then, do the actual rotation
-        self.transform("rotate", **kwargs)
+        self.transform("rotate", matrix=quaternion.to_rotation_matrix())
 
         # Then translate the model back to where it was before
         self.translate(*self.translation.xyz, False)

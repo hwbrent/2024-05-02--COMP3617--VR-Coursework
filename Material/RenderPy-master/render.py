@@ -82,7 +82,7 @@ def main() -> None:
             orientation = apply_tilt_correction(accelerometer, orientation, gyroscope)
             orientation.normalise()
 
-            model.rotate(matrix=orientation.to_rotation_matrix())
+            model.rotate(orientation)
 
         render(model, image, zBuffer)
         image.show()
