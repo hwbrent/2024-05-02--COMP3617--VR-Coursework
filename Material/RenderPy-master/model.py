@@ -131,7 +131,7 @@ class Model(object):
             vertex.y = vertex.y / maxCoords[1]
             vertex.z = vertex.z / maxCoords[2]
 
-    def transform(self, method, **kwargs) -> None:
+    def transform(self, method, record: bool, **kwargs) -> None:
         call_method = lambda obj: getattr(obj, method)(**kwargs)
 
         prev_distance = distance_to(self.centre)
