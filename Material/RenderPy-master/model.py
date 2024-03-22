@@ -8,7 +8,7 @@ from physics import get_bounding_sphere
 from camera import distance_to, get_lod_swap_range
 
 import numpy as np
-from pymeshlab import MeshSet
+from pymeshlab import filter_list, MeshSet
 
 import os
 
@@ -27,6 +27,7 @@ COW         = "cow.obj"
 # The name of the MeshLab operation that reduces the polygon number. See:
 # https://pymeshlab.readthedocs.io/en/latest/filter_list.html#meshing_decimation_quadric_edge_collapse
 MESHLAB_FILTER_NAME = "meshing_decimation_quadric_edge_collapse"
+assert MESHLAB_FILTER_NAME in filter_list()
 
 
 def reduce_polygons(mesh_set: MeshSet, targetfacenum: int) -> None:
