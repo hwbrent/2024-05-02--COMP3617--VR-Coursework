@@ -8,6 +8,7 @@ from physics import get_bounding_sphere
 from camera import distance_to, get_lod_swap_range
 
 import numpy as np
+from pymeshlab import MeshSet
 
 import os
 
@@ -22,6 +23,76 @@ BOOKS       = "books.obj"
 COLA        = "cola.obj"
 COW         = "cow.obj"
 # fmt: on
+
+# The name of the MeshLab operation that reduces the polygon number. See:
+# https://pymeshlab.readthedocs.io/en/latest/filter_list.html#meshing_decimation_quadric_edge_collapse
+MESHLAB_FILTER_NAME = "meshing_decimation_quadric_edge_collapse"
+
+
+def reduce_polygons(mesh_set: MeshSet, targetfacenum: int) -> None:
+    """
+    Given a `MeshSet`, this function reduces (in-place) the polygons of the
+    currently-open mesh.
+    """
+
+    print(f'Applying "{MESHLAB_FILTER_NAME}" with targetfacenum={targetfacenum}')
+
+    mesh_set.apply_filter(
+        MESHLAB_FILTER_NAME,
+        targetfacenum=targetfacenum,
+    )
+
+
+def simplify_and_save(targetfacenum: int, output_name: str) -> None:
+    """
+    Helper function for `simplify_headset`
+
+    Given a number of faces to remove, and the desired name of the output,
+    this function opens the fully-detailed model, calls `reduce_polygons`,
+    and saves the result
+    """
+    ms = MeshSet()
+
+    ### Load the fully-detailed model ###
+    input_path = os.path.join(data_dir, HEADSET_100)
+    print(f'Loading "{input_path}"')
+    ms.load_new_mesh(input_path)
+
+    ### Reduce the number of polygons (to 50% or 25%) ###
+    reduce_polygons(ms, targetfacenum)
+
+    ### Save the resulting mesh ###
+    output_path = os.path.join(data_dir, output_name)
+    print(f'Saving to "{output_path}"')
+    ms.save_current_mesh(
+        output_path,
+        save_polygonal=False,  # prevents crash
+    )
+
+    ### Clean up ###
+    # A .mtl file is saved along with the .obj file. We don't want this. Idk
+    # if there's a way to prevent this within the MeshLab paradigm, so we
+    # just delete the file manually
+    mtl_file_path = output_path + ".mtl"
+    os.remove(mtl_file_path)
+
+
+def simplify_headset():
+    """
+    --- Problem 6 Question 1 ---
+
+    Using Python bindings for MeshLab, this function simplifies the provided
+    VR headset model to two additional versions having 1/2 and 1/4 of the
+    polygons.
+    """
+
+    ### Get the target face numbers ###
+    model = Model(HEADSET_100)
+    total_faces = len(model.faces)
+
+    ### Do the simplifying ###
+    simplify_and_save(total_faces // 2, HEADSET_50)
+    simplify_and_save(total_faces // 4, HEADSET_25)
 
 
 class Model(object):
@@ -236,3 +307,7 @@ class Model(object):
             self.scaling = self.scaling.scale(**kwargs)
 
         self.transform("scale", record, **kwargs)
+
+
+if __name__ == "__main__":
+    simplify_headset()
