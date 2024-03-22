@@ -16,7 +16,7 @@ this_dir = os.path.dirname(__file__)
 data_dir = os.path.join(this_dir, "data")
 
 # fmt: off
-HEADSET_100 = "headset_100%.obj"
+HEADSET_100 = "headset.obj"
 HEADSET_50  = "headset_50%.obj"
 HEADSET_25  = "headset_25%.obj"
 BOOKS       = "books.obj"
