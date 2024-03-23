@@ -225,8 +225,8 @@ class Model(object):
         self.vertices = [call_method(v) for v in self.vertices]
         self.centre = call_method(self.centre)
 
-        if record:
-            self.handle_lod_swap(prev_distance)
+        # if record:
+        #     self.handle_lod_swap(prev_distance)
 
     def handle_lod_swap(self, prev_distance: float) -> None:
         """
