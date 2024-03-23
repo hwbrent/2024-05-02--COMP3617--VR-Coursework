@@ -235,8 +235,8 @@ class Model(object):
         self.vertices = [call_method(v) for v in self.vertices]
         self.centre = call_method(self.centre)
 
-        # if record:
-        #     self.handle_lod_swap(prev_distance)
+        if record:
+            self.handle_lod_swap(prev_distance)
 
     def handle_lod_swap(self, prev_distance: float) -> None:
         """
@@ -250,18 +250,25 @@ class Model(object):
             return
 
         # fmt: off
-        self.load(
+        self.version = (
             HEADSET_100 if lod_range == "closest" else
             HEADSET_50 if lod_range == "middle" else
             HEADSET_25
         )
         # fmt: on
 
-        # Get the cumulative transformations previously applied and reapply
-        # them to align the newly-loaded model with the previous model
-        self.translate(*self.translation.xyz, record=False)
-        self.rotate(self.rotation, record=False)
+        # Get the cumulative transformations previously applied and apply
+        # them the current model's vertices to align the new model with the
+        # previous one
         self.scale(*self.scaling.xyz, record=False)
+
+        # We initially swap out `self.translation` for
+        translation = self.translation
+        self.translation = Vector(0, 0, 0)
+        self.rotate(self.rotation, record=False)
+        self.translation = translation
+
+        self.translate(*self.translation.xyz, record=False)
 
     def translate(
         self, dx: float = 0, dy: float = 0, dz: float = 0, record: bool = True
