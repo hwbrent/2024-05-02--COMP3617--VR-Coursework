@@ -16,11 +16,13 @@ NEAR_CLIP_Z = camera.z + NEAR_CLIP
 # Dict relating to the level-of-detail optimisation strategy. The key is the
 # "name" of the range, and the value is the min & max values of the range
 # of distances used to dictate which model is used
+# fmt: off
 lod_ranges = {
-    "closest": (NEAR_CLIP_Z, 4),
-    "middle": (4, 10),
-    "furthest": (10, math.inf),
+    "closest":  (NEAR_CLIP_Z, 10),
+    "middle":   (10, 25),
+    "furthest": (25, math.inf),
 }
+# fmt: on
 
 
 def getPerspectiveProjection(vector: Vector, image: Image) -> None | tuple[int, int]:
