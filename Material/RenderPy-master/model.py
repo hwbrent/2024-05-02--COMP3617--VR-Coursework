@@ -96,64 +96,74 @@ def simplify_headset():
     simplify_and_save(total_faces // 4, HEADSET_25)
 
 
-class Model(object):
-    def __init__(self, file: str = HEADSET_100):
-        self.file = file
+def load(file: str) -> dict:
+    """
+    This function returns a `dict` containing vertices and faces according
+    to the information parsed in the file at location `self.version`.
+    """
+    vertices = []
+    faces = []
 
-        # Define what the attributes are
-        self.vertices = np.array([])
-        self.faces = []
-        self.centre = Vector(0, 0, 0)
-        self.radius = 0.0
+    file_path = os.path.join(data_dir, file)
+    with open(file_path, "r") as f:
+        for line in f:
+            if line.startswith("#"):
+                continue
+            segments = line.split()
+            if not segments:
+                continue
+
+            # Vertices
+            if segments[0] == "v":
+                vertex = Vector(*[float(i) for i in segments[1:4]])
+                vertices.append(vertex)
+
+            # Faces
+            elif segments[0] == "f":
+                # Support models that have faces with more than 3 points
+                # Parse the face as a triangle fan
+                for i in range(2, len(segments) - 1):
+                    corner1 = int(segments[1].split("/")[0]) - 1
+                    corner2 = int(segments[i].split("/")[0]) - 1
+                    corner3 = int(segments[i + 1].split("/")[0]) - 1
+                    faces.append([corner1, corner2, corner3])
+
+    return {"vertices": np.array(vertices), "faces": faces}
+
+
+class Model(object):
+
+    def __init__(self, file: str = HEADSET_100):
+        self.version = file
+
+        # Load in all the mesh versions' vertices and faces
+        self.meshes = {
+            version: load(version) for version in (HEADSET_100, HEADSET_50, HEADSET_25)
+        }
+
+        # The centre and radius should be pretty much the same across each
+        # of the model versions, so just use the vertices for the 25% version
+        # since it will result in the fewest computations
+        self.centre, self.radius = get_bounding_sphere(
+            self.meshes[HEADSET_25]["vertices"]
+        )
 
         # The cumulative transformations
         self.translation = Vector(0, 0, 0)
         self.rotation = Quaternion.identity()
         self.scaling = Vector(1, 1, 1)
 
-        # Set the attributes
-        self.load(file)
+    @property
+    def vertices(self) -> list[Vector]:
+        return self.meshes[self.version]["vertices"]
 
-    def load(self, file: str) -> None:
-        self.file = file
-        self.vertices, self.faces = self.parse_file()
-        self.centre, self.radius = get_bounding_sphere(self.vertices)
+    @vertices.setter
+    def vertices(self, value) -> None:
+        self.meshes[self.version]["vertices"] = value
 
-    def parse_file(self) -> None:
-        """
-        This function populates `self.vertices` and `self.faces` according
-        to the information parsed in the file at location `self.file`.
-        """
-        vertices = []
-        faces = []
-
-        file_path = os.path.join(data_dir, self.file)
-        with open(file_path, "r") as f:
-            for line in f:
-                if line.startswith("#"):
-                    continue
-                segments = line.split()
-                if not segments:
-                    continue
-
-                # Vertices
-                if segments[0] == "v":
-                    vertex = Vector(*[float(i) for i in segments[1:4]])
-                    vertices.append(vertex)
-
-                # Faces
-                elif segments[0] == "f":
-                    # Support models that have faces with more than 3 points
-                    # Parse the face as a triangle fan
-                    for i in range(2, len(segments) - 1):
-                        corner1 = int(segments[1].split("/")[0]) - 1
-                        corner2 = int(segments[i].split("/")[0]) - 1
-                        corner3 = int(segments[i + 1].split("/")[0]) - 1
-                        faces.append([corner1, corner2, corner3])
-
-        vertices = np.array(vertices)
-
-        return vertices, faces
+    @property
+    def faces(self) -> list[list[int]]:
+        return self.meshes[self.version]["faces"]
 
     def get_face_normals(self) -> dict[int, list[Vector]]:
         """
