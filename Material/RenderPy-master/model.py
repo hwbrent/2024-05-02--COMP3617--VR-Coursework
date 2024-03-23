@@ -262,7 +262,10 @@ class Model(object):
         # previous one
         self.scale(*self.scaling.xyz, record=False)
 
-        # We initially swap out `self.translation` for
+        # We initially swap out `self.translation` because the new model is
+        # at the origin, but the stored value of `self.translation` probably
+        # isn't. So if we don't temporarily replace `self.translation`, it
+        # will mess up the translations carried out for `self.rotate`
         translation = self.translation
         self.translation = Vector(0, 0, 0)
         self.rotate(self.rotation, record=False)
