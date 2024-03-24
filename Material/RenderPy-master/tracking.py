@@ -1,6 +1,6 @@
 import math
 
-from vector import Vector, EulerAngles, Quaternion
+from vector import Vector, Quaternion
 
 # TODO: Problem 3 Question 3
 # Try a few different alpha values (e.g., 0.01, 0.1, ...), investigate and
