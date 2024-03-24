@@ -8,7 +8,7 @@ from quaternion import Quaternion
 from dataset import Dataset
 from video import Video
 from benchmarking import show_progress
-from tracking import get_dead_reckoning_filter, apply_tilt_correction
+from tracking import apply_dead_reckoning_filter, apply_tilt_correction
 
 FOCAL_LENGTH = 1
 NEAR_CLIP = 0.1
@@ -107,7 +107,7 @@ def main() -> None:
         if prev_time is not None:
             time_diff = time - prev_time
 
-            orientation *= get_dead_reckoning_filter(gyroscope, time_diff)
+            orientation = apply_dead_reckoning_filter(gyroscope, time_diff, orientation)
             orientation.normalise()
 
             orientation = apply_tilt_correction(accelerometer, orientation, gyroscope)

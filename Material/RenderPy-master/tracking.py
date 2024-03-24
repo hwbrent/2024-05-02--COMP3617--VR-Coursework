@@ -11,7 +11,9 @@ from quaternion import Quaternion
 ALPHA = 0.01
 
 
-def get_dead_reckoning_filter(gyroscope, time_delta: float) -> Quaternion:
+def apply_dead_reckoning_filter(
+    gyroscope, time_delta: float, orientation: Quaternion
+) -> Quaternion:
     """
     --- Problem 3 Question 1 ---
 
@@ -19,7 +21,8 @@ def get_dead_reckoning_filter(gyroscope, time_delta: float) -> Quaternion:
     rotational rate)
     """
     roll, pitch, yaw = gyroscope * time_delta
-    return Quaternion.from_euler(roll, pitch, yaw)
+    filter = Quaternion.from_euler(roll, pitch, yaw)
+    return orientation * filter
 
 
 def apply_tilt_correction(accelerometer, orientation: Quaternion, gyroscope):
