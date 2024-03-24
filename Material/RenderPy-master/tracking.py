@@ -10,6 +10,13 @@ from quaternion import Quaternion
 # / necessary and discuss this in the report.
 TILT_ALPHA = 0.01
 
+# TODO: Problem 4 Question 2
+# Try a few different alpha values (e.g., 0.01, 0.1, ...), investigate and
+# comment on their effect on drift compensation in your report. Implement
+# any other processing of the magnetometer values thatyou consider important
+# / necessary and discuss this in the report.
+YAW_ALPHA = 0.01
+
 
 def apply_dead_reckoning_filter(
     gyroscope, time_delta: float, orientation: Quaternion
