@@ -113,7 +113,7 @@ def main() -> None:
 
             orientation = apply_dead_reckoning_filter(gyroscope, time_diff, orientation)
             orientation = apply_tilt_correction(accelerometer, orientation, gyroscope)
-            orientation = mitigate_yaw_drift(orientation, magnetometer)
+            orientation = mitigate_yaw_drift(orientation, ref_mag, magnetometer)
 
             model.rotate(matrix=orientation.to_rotation_matrix())
         else:

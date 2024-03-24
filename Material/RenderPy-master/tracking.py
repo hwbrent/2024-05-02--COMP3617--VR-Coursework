@@ -69,7 +69,9 @@ def apply_tilt_correction(
     return fused
 
 
-def mitigate_yaw_drift(orientation: Quaternion, magnetometer) -> Quaternion:
+def mitigate_yaw_drift(
+    orientation: Quaternion, ref_reading, current_reading
+) -> Quaternion:
     """
     --- Problem 4 Question 1 ---
 
