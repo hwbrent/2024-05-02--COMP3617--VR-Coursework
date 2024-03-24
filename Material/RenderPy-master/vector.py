@@ -339,12 +339,12 @@ class Quaternion:
         )
         # fmt: on
 
-    def to_euler(self) -> "EulerAngles":
+    def to_euler(self) -> tuple[float, float, float]:
         """
         --- Problem 2 Question 2 Part 2 ---
 
-        Given a `Quaternion`, this function returns the corresponding Euler
-        angles object
+        Given a `Quaternion`, this function returns the corresponding roll,
+        pitch and yaw angles in that order
         """
         w, x, y, z = self
 
@@ -367,7 +367,7 @@ class Quaternion:
         z2 = math.pow(z, 2)
         yaw = math.atan2(2 * (wz + xy), 1 - (2 * (y2 + z2)))
 
-        return EulerAngles(roll, pitch, yaw)
+        return roll, pitch, yaw
 
     def to_rotation_matrix(self) -> np.ndarray:
         """
