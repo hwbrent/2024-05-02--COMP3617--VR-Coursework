@@ -17,8 +17,8 @@ def get_dead_reckoning_filter(gyroscope, time_delta: float) -> Quaternion:
     Implements a dead reckoning filter (using only the gyroscope-measured
     rotational rate)
     """
-    angles = EulerAngles(*(gyroscope * time_delta))
-    return angles.to_quaternion()
+    roll, pitch, yaw = gyroscope * time_delta
+    return Quaternion.from_euler(roll, pitch, yaw)
 
 
 def apply_tilt_correction(accelerometer, orientation: Quaternion, gyroscope):
@@ -52,7 +52,7 @@ def apply_tilt_correction(accelerometer, orientation: Quaternion, gyroscope):
     # and the accelerometer estimation
     pitch = phi if (acc_vector_global.z < 0) else -phi
 
-    correction = EulerAngles(0, pitch, 0).to_quaternion()
+    correction = Quaternion.from_euler(0, pitch, 0)
     fused = Quaternion.slerp(orientation, orientation * correction, ALPHA)
 
     return fused
