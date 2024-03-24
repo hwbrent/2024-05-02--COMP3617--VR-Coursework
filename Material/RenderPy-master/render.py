@@ -98,7 +98,7 @@ def main() -> None:
 
     ### Prep for the programme loop ###
     start_time = timer()
-
+    ref_mag = None
     orientation = Quaternion.identity()
     prev_time = None
 
@@ -116,6 +116,9 @@ def main() -> None:
             orientation = mitigate_yaw_drift(orientation, magnetometer)
 
             model.rotate(matrix=orientation.to_rotation_matrix())
+        else:
+            # use the first magnetometer reading as the reference value
+            ref_mag = magnetometer
 
         render(model, image, zBuffer)
         image.show()
