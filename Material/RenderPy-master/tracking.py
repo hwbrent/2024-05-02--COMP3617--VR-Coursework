@@ -29,7 +29,9 @@ def apply_dead_reckoning_filter(
     return orientation
 
 
-def apply_tilt_correction(accelerometer, orientation: Quaternion, gyroscope):
+def apply_tilt_correction(
+    accelerometer, orientation: Quaternion, gyroscope
+) -> Quaternion:
     """
     --- Problem 3 Question 2 ---
 
