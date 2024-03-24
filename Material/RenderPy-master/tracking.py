@@ -8,7 +8,7 @@ from quaternion import Quaternion
 # comment on their effect on drift compensation in your report. Implement
 # any other processing of the accelerometer values that you consider important
 # / necessary and discuss this in the report.
-ALPHA = 0.01
+TILT_ALPHA = 0.01
 
 
 def apply_dead_reckoning_filter(
@@ -61,7 +61,7 @@ def apply_tilt_correction(accelerometer, orientation: Quaternion, gyroscope):
     pitch = phi if (acc_vector_global.z < 0) else -phi
 
     correction = Quaternion.from_euler(0, pitch, 0)
-    fused = Quaternion.slerp(orientation, orientation * correction, ALPHA)
+    fused = Quaternion.slerp(orientation, orientation * correction, TILT_ALPHA)
 
     fused.normalise()
     return fused
