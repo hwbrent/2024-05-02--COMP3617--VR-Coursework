@@ -314,7 +314,7 @@ class Quaternion:
         self.w, self.x, self.y, self.z = self * other
         return self
 
-    def to_euler_angles(self) -> "EulerAngles":
+    def to_euler(self) -> "EulerAngles":
         """
         --- Problem 2 Question 2 Part 2 ---
 
