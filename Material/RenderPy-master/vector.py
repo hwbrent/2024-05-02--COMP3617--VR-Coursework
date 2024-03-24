@@ -314,6 +314,31 @@ class Quaternion:
         self.w, self.x, self.y, self.z = self * other
         return self
 
+    @classmethod
+    def from_euler(cls, roll: float, pitch: float, yaw: float) -> "Quaternion":
+        """
+        --- Problem 2 Question 2 Part 1 ---
+
+        Converts the three Euler angles (in radians) to a `Quaternion`.
+        """
+
+        # fmt: off
+        sin_roll  = math.sin(roll  * 0.5)
+        sin_pitch = math.sin(pitch * 0.5)
+        sin_yaw   = math.sin(yaw   * 0.5)
+
+        cos_roll  = math.cos(roll  * 0.5)
+        cos_pitch = math.cos(pitch * 0.5)
+        cos_yaw   = math.cos(yaw   * 0.5)
+
+        return cls(
+            w = (cos_roll * cos_pitch * cos_yaw) + (sin_roll * sin_pitch * sin_yaw),
+            x = (sin_roll * cos_pitch * cos_yaw) - (cos_roll * sin_pitch * sin_yaw),
+            y = (cos_roll * sin_pitch * cos_yaw) + (sin_roll * cos_pitch * sin_yaw),
+            z = (cos_roll * cos_pitch * sin_yaw) - (sin_roll * sin_pitch * cos_yaw),
+        )
+        # fmt: on
+
     def to_euler(self) -> "EulerAngles":
         """
         --- Problem 2 Question 2 Part 2 ---
