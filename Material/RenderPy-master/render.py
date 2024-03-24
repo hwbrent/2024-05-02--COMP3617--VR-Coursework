@@ -108,10 +108,7 @@ def main() -> None:
             time_diff = time - prev_time
 
             orientation = apply_dead_reckoning_filter(gyroscope, time_diff, orientation)
-            orientation.normalise()
-
             orientation = apply_tilt_correction(accelerometer, orientation, gyroscope)
-            orientation.normalise()
 
             model.rotate(matrix=orientation.to_rotation_matrix())
 

@@ -22,7 +22,11 @@ def apply_dead_reckoning_filter(
     """
     roll, pitch, yaw = gyroscope * time_delta
     filter = Quaternion.from_euler(roll, pitch, yaw)
-    return orientation * filter
+
+    orientation *= filter
+
+    orientation.normalise()
+    return orientation
 
 
 def apply_tilt_correction(accelerometer, orientation: Quaternion, gyroscope):
@@ -59,4 +63,5 @@ def apply_tilt_correction(accelerometer, orientation: Quaternion, gyroscope):
     correction = Quaternion.from_euler(0, pitch, 0)
     fused = Quaternion.slerp(orientation, orientation * correction, ALPHA)
 
+    fused.normalise()
     return fused
