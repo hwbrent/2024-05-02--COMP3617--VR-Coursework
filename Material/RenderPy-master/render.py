@@ -8,7 +8,11 @@ from quaternion import Quaternion
 from dataset import Dataset
 from video import Video
 from benchmarking import show_progress
-from tracking import apply_dead_reckoning_filter, apply_tilt_correction
+from tracking import (
+    apply_dead_reckoning_filter,
+    apply_tilt_correction,
+    mitigate_yaw_drift,
+)
 
 FOCAL_LENGTH = 1
 NEAR_CLIP = 0.1
@@ -109,6 +113,7 @@ def main() -> None:
 
             orientation = apply_dead_reckoning_filter(gyroscope, time_diff, orientation)
             orientation = apply_tilt_correction(accelerometer, orientation, gyroscope)
+            orientation = mitigate_yaw_drift(orientation, magnetometer)
 
             model.rotate(matrix=orientation.to_rotation_matrix())
 

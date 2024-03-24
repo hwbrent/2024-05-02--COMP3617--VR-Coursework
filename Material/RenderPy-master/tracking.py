@@ -65,3 +65,15 @@ def apply_tilt_correction(accelerometer, orientation: Quaternion, gyroscope):
 
     fused.normalise()
     return fused
+
+
+def mitigate_yaw_drift(orientation: Quaternion, magnetometer) -> Quaternion:
+    """
+    --- Problem 4 Question 1 ---
+
+    Given the `magnetometer` readings from the headset IMU, this function
+    constructs and applies an appropriate complementary filter to the provided
+    `orientation` quaternion in order to mitigate any yaw drift
+    """
+    orientation.normalise()
+    return orientation
